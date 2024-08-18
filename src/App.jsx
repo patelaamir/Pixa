@@ -1,35 +1,15 @@
-import { useState } from 'react'
 import './App.css'
-import Header from './components/header'
-import Menu from './components/Menu'
-import Post from './components/Post'
-import PostList from './components/PostList'
+import useScreenSize from "./utils/screenSize"
+import DesktopLayout from "./components/DesktopLayout"
+import MobileLayout from "./components/MobileLayout"
 
 function App() {
-
-  const [posts, setPosts] = useState([
-    {
-      username: "jannatp",
-      image: "https://t3.ftcdn.net/jpg/02/43/25/90/360_F_243259090_crbVsAqKF3PC2jk2eKiUwZHBPH8Q6y9Y.jpg",
-      caption: "Its a sunday!"
-    },
-    {
-      username: "aamirp",
-      image: "https://t3.ftcdn.net/jpg/02/43/25/90/360_F_243259090_crbVsAqKF3PC2jk2eKiUwZHBPH8Q6y9Y.jpg",
-      caption: "Its a Monday!"
-    },
-    {
-      username: "danishp",
-      image: "https://t3.ftcdn.net/jpg/02/43/25/90/360_F_243259090_crbVsAqKF3PC2jk2eKiUwZHBPH8Q6y9Y.jpg",
-      caption: "Its a Tuesday!"
-    },
-  ])
+  const screenSize = useScreenSize()
+  const layout = screenSize.width < 640 ? <MobileLayout/> : <DesktopLayout/>
 
   return (
-    <div className='w-1/2 mx-auto'>
-      <Header/>
-      <PostList posts={posts}/>
-      <Menu/>
+    <div>
+      {layout}
     </div>
   )
 }

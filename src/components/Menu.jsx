@@ -4,7 +4,7 @@ import { UserRound } from "lucide-react"
 
 const Menu =  () => {
     return (
-        <div className="fixed bottom-0 z-10 flex justify-around bg-white w-1/2">
+        <div className="fixed bottom-0 z-10 flex justify-around bg-white w-full">
             <div className="py-3">
                 <LayoutDashboard/>
             </div>

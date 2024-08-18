@@ -2,7 +2,7 @@ const PostList = (props) => {
 
     const renderedPosts = props.posts.map(post => {
         return (
-            <div className="w-full">
+            <div className="w-full" key={post.username}>
                 <div className="font-semibold py-2">
                     {post.username}
                 </div>
