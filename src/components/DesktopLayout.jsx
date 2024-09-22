@@ -1,11 +1,15 @@
+import Header from "./Header"
+import PostList from "./PostList"
+import Menu from "./Menu"
 
-
-function DesktopLayout() {
+function DesktopLayout(props) {
     return (
-        <div>
-            Aamir
+        <div className='px-5'>
+          <Header/>
+          <PostList posts={props.posts}/>
+          <Menu/>
         </div>
-    )
+      )
 }
 
 export default DesktopLayout
