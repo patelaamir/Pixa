@@ -1,4 +1,8 @@
-import firebase from "firebase"
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyBXEO2VCF-uUsFfyg6kALzHCjPXyE9OU0w",
@@ -9,9 +13,40 @@ const firebaseConfig = {
     appId: "1:1058523351954:web:62939890ec44cbdd2e4f4b"
   };
 
-  const firebaseApp = firebase.initializeApp(firebaseConfig);
-  const db = firebaseApp.firestore()
-  const auth = firebase.auth()
-  const storage = firebase.storage()
+  const firebaseApp = initializeApp(firebaseConfig);
+  const db = getFirestore(firebaseApp)
+  const auth = getAuth(firebaseApp)
+  const storage = getStorage(firebaseApp)
+
+  /* createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed up 
+      const user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // ..
+  });
+
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+  });
+
+  signOut(auth).then(() => {
+    // Sign-out successful.
+  }).catch((error) => {
+    // An error happened.
+  }); */
+
 
   export { db, auth, storage }

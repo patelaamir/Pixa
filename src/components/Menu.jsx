@@ -1,6 +1,4 @@
-import { LayoutDashboard } from "lucide-react"
-import { CirclePlus } from "lucide-react"
-import { UserRound } from "lucide-react"
+import { LayoutDashboard, CirclePlus, UserRound, LogOut } from "lucide-react"
 
 const Menu =  () => {
     return (
@@ -13,6 +11,9 @@ const Menu =  () => {
             </div>
             <div className="py-3">
                 <UserRound/>
+            </div>
+            <div className="cursor-pointer py-3">
+                <LogOut/>
             </div>
         </div>
     )

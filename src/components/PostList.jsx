@@ -1,12 +1,15 @@
+import useScreenSize from "../utils/screenSize"
+
 const PostList = (props) => {
+    const screenSize = useScreenSize()
 
     const renderedPosts = props.posts.map(post => {
         return (
-            <div className="w-full" key={post.username}>
+            <div key={post.username}>
                 <div className="font-semibold py-2">
                     {post.username}
                 </div>
-                <img src={post.image} className="w-full"/>
+                <img src={post.imageUrl} className="w-full"/>
                 <div className="my-2">
                     <span className="font-semibold mr-1.5">
                         {post.username}
@@ -20,7 +23,7 @@ const PostList = (props) => {
     })
 
     return (
-        <div>
+        <div className={ screenSize.width < 640 ? 'w-full' : 'w-1/2' }>
             {renderedPosts}
         </div>
     )
