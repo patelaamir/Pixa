@@ -2,20 +2,26 @@ import { auth, db } from "../firebase"
 import { createUserWithEmailAndPassword } from "firebase/auth"
 import { doc, setDoc } from "firebase/firestore"; 
 import { useNavigate } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useEffect } from 'react'
 
 function Signup() {
     const navigate = useNavigate()
+    const [user, loading] = useAuthState(auth);
+
+    useEffect(() => {
+        if (!loading && user) {
+            navigate("/")
+        }
+    }, [loading])
 
     const handleSignup = (e) => {
         e.preventDefault()
         let email = document.getElementById("email").value
         let password = document.getElementById("password").value
-        console.log(email, password)
         createUserWithEmailAndPassword(auth, email, password).then((userCredentials) => {
             const user = userCredentials.user
-            console.log(user)
             createUserProfile(email)
-            console.log(auth)
         }).catch((error) => {
             console.log(error.code)
         })
@@ -24,13 +30,13 @@ function Signup() {
     const createUserProfile = async(email) => {
         let fullName = document.getElementById("fullName").value
         let username = createUsername(email)
-
-        await setDoc(doc(db, "userProfile", email), {
+        let profile = {
             fullName: fullName,
             username: username,
             email: email
-        });
-
+        }
+        await setDoc(doc(db, "userProfile", email), profile);
+        localStorage.setItem("profile", JSON.stringify(profile))
         navigate("/")
     }
 
@@ -66,9 +72,13 @@ function Signup() {
                     placeholder="Password" /> 
                 <button
                     onClick={handleSignup}
-                    className="py-2 px-4 rounded-md font-semibold text-orange-900 bg-orange-400">
+                    className="button">
                     Sign Up
                 </button>
+                <div className="text-sm text-gray-600">
+                    Already have an account? 
+                <a href="/login" className="text-blue-700"> Log In </a>
+                </div>
 
 
             </div>

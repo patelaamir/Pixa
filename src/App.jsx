@@ -6,13 +6,17 @@ import { useState, useEffect } from 'react'
 import { collection, getDocs } from "firebase/firestore"; 
 import { db, auth } from './firebase' 
 import { Routes, Route } from 'react-router-dom';
-import Signup from "./components/Signup"; 
-import Login from "./components/Login";
-import { useNavigate } from 'react-router-dom'
+import Signup from "./pages/Signup"; 
+import Login from "./pages/Login";
+import Profile from "./pages/Profile"
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useAuthState } from "react-firebase-hooks/auth";
 
 function App() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [posts, setPosts] = useState([]);
+  const [user, loading] = useAuthState(auth);
 
   
 
@@ -20,11 +24,10 @@ function App() {
 
     (async function() {
       try {
-        if(!auth.currentUser) {
-          navigate("/login")
+        if(!loading && (!auth.currentUser || location.pathname != "/signup")) {
+        	navigate("/login")
         }
         const querySnapShot = await getDocs(collection(db, "posts"))
-        console.log(querySnapShot.docs)
         setPosts(querySnapShot.docs.map(doc => doc.data()))
       } catch (e) {
           console.error(e);
@@ -42,6 +45,7 @@ function App() {
       <Routes>
         <Route path="/signup" element={ <Signup />}/>
         <Route path="/login" element={ <Login /> }/>
+        <Route path="/profile/:username" element={ <Profile /> } />
         <Route path="/" element={layout} />
       </Routes>
     </div>

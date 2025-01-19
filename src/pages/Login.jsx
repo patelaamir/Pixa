@@ -1,23 +1,41 @@
-import { auth } from "../firebase"
+import { auth, db } from "../firebase"
+import { query, collection, where, getDocs } from "firebase/firestore"
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom"
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useEffect } from 'react'
 
 function Login() {
     const navigate = useNavigate()
+    const [user, loading] = useAuthState(auth);
+    console.log(user)
+
+    useEffect(() => {
+        if (!loading && user) {
+            navigate("/")
+        }
+    }, [loading])
 
     const handleLogin = (e) => {
         e.preventDefault()
         let email = document.getElementById("email").value
         let password = document.getElementById("password").value
-        console.log(email, password)
         signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            const user = userCredential.user;
-            console.log(user)
-            navigate("/")
+            const currentUser = userCredential.user;
+            getUserProfile(currentUser)
         }).catch((error) => {
             const errorCode = error.code;
         });
+    }
+
+    const getUserProfile = async (currentUser) => {
+        const q = query(collection(db, "userProfile"), where("email", "==", currentUser.email));
+    
+        const querySnapshot = await getDocs(q);
+        const profile = querySnapshot.docs[0].data()
+        localStorage.setItem("profile", JSON.stringify(profile))
+        navigate("/")
     }
 
     return(
@@ -39,9 +57,13 @@ function Login() {
                     placeholder="Password"/>
                 <button 
                     onClick={handleLogin}
-                    className="py-2 px-4 rounded-md font-semibold text-orange-900 bg-orange-400">
+                    className="button">
                     Login
                 </button>
+                <div className="text-sm text-gray-600">
+                    Dont have an account?  
+                    <a href="/signup" className="text-blue-700"> Create New </a>
+                    </div> 
             </div>
         </div>
     )
