@@ -1,33 +1,53 @@
 import { TextField } from '@mui/material';
-import { collection, getDocs, where } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { useEffect, useState } from "react"
 import { db } from '../firebase';
+import { User } from "lucide-react"
+import { useNavigate } from "react-router-dom";
 
 
 function Search() {
     const [search, setSearch] = useState("")
     const [searchResults, setSearchResults] = useState([])
+    const [users, setUsers] = useState([])
+    const navigate = useNavigate()
 
     useEffect(() => {
-        console.log(search)
+        getAllUsers()
+    }, [])
+
+    useEffect(() => {
         if (search != "")
             searchUserProfile()
         else
             setSearchResults([])
     }, [search])
 
-    const searchUserProfile = async () => {
+    const getAllUsers = async () => {
         try {
-            const querySnapShot = await getDocs(collection(db, "userProfile"), where("username", ">=", search), where("username", "<=", search + "\uf8ff"))
+            const querySnapShot = await getDocs(collection(db, "userProfile"))
             let results = querySnapShot.docs?.map(doc => doc.data())
-            console.log(results)
-            setSearchResults(results)
-            console.log(searchResults)
-        } catch(err) {
+            setUsers(results)
+        } catch (err) {
             console.log(err)
         }
     }
 
+    const searchUserProfile = () => {
+        let results = users.filter(user => {
+            return user.username.toLowerCase().includes(search.toLowerCase()) || user.fullName.toLowerCase().includes(search.toLowerCase())
+        })
+        setSearchResults(results)
+        console.log(searchResults);
+        
+    }
+
+    const navigateToProfile = (profile) => {
+        console.log(profile);
+        
+        /* navigate(`/profile/${profile.username}`) */
+    }
+   
     return (
         <div>
             <TextField
@@ -43,6 +63,28 @@ function Search() {
                 onChange={(event) => setSearch(event.target.value) }
                 />
 
+                <div className='space-y-4 mt-5'>
+                    {
+                        searchResults.map((profile, index) => (
+                        <a className='flex items-center space-x-2 text-sm' href={`/profile/${profile.username}`}>
+                            {
+                                profile.image
+                                ?
+                                <img src={profile.image} className='w-8 h-8 rounded-full'/>
+                                :
+                                <User className='w-8 h-8 p-1 bg-gray-100 rounded-full stroke-1'/>
+                            }
+                            <div>
+                                <div>
+                                    {profile.fullName}
+                                </div>
+                                <div className='text-xs'>
+                                    {profile.username}
+                                </div>
+                            </div>
+                        </a>
+                    ))}
+                </div>
         </div>
     )
 }
