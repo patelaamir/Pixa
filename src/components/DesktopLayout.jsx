@@ -2,13 +2,15 @@ import Header from "./Header"
 import PostList from "./PostList"
 import DesktopMenu from "./DesktopMenu"
 
-function DesktopLayout(props) {
+function DesktopLayout({children}) {
     return (
         <div className='px-5'>
           <Header/>
           <div className="flex">
             <DesktopMenu />
-            <PostList posts={props.posts} />
+            <div>
+              {children}
+            </div>
             <div className="w-1/4"></div>
           </div>
         </div>

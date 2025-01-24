@@ -1,9 +1,27 @@
+import { useEffect, useState } from "react"
 import useScreenSize from "../utils/screenSize"
+import { collection, getDocs, query } from "firebase/firestore"
+import { db } from "../firebase"
 
-const PostList = (props) => {
+const PostList = () => {
     const screenSize = useScreenSize()
+    const [posts, setPosts] = useState([])
 
-    const renderedPosts = props.posts.map(post => {
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+              const querySnapShot = await getDocs(query(collection(db, "posts")));
+              const postsArray = querySnapShot.docs.map((doc) => doc.data());
+              setPosts(postsArray);
+            } catch (error) {
+              console.error("Error fetching posts:", error);
+            }
+          };
+      
+        fetchPosts();
+    }, [])
+
+    const renderedPosts = posts?.map(post => {
         return (
             <div key={post.username}>
                 <div className="font-semibold py-2">

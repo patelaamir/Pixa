@@ -6,19 +6,24 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { TextField } from '@mui/material';
+import { User, X } from "lucide-react";
+import { IKContext, IKUpload } from "imagekitio-react"
+
 
 function Profile () {
     const { username } = useParams();
     const [profile, setProfile] = useState({})
     const [following, setFollowing] = useState(false)
     const [openDialog, setOpenDialog] = useState(false)
-    const currentUser = JSON.parse(localStorage.getItem("profile")).username;
-    const inputFile = useRef(null)
+    const currentUser = JSON.parse(localStorage.getItem("profile"));
+    const URLEndpoint = "https://ik.imagekit.io/pixa/"
+    const publicKey = "public_AZOsWS07COGHjErNayUX76zd4Oc="
 
 
     useEffect(() => {
         getProfileData()
     }, [username])
+    
 
     const getProfileData = async () => {
         try {
@@ -35,8 +40,25 @@ function Profile () {
         }
     }
 
+    const authenticateImageKit = async () => {
+        try {
+          const response = await fetch('http://localhost:3001/auth');
+    
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+            }
+    
+            const data = await response.json();
+            const { signature, expire, token } = data;
+            return { signature, expire, token };
+        } catch (error) {
+            throw new Error(`Authentication request failed: ${error.message}`);
+        }
+    }
+
     const checkIfFollowing = async () => {
-        const q = query(collection(db, "following"), where("following", "==", username), where("follower", "==", currentUser))
+        const q = query(collection(db, "following"), where("following", "==", username), where("follower", "==", currentUser.username))
         const querySnapShot = await getDocs(q)
         querySnapShot.forEach(doc => {
             if (doc) {
@@ -50,7 +72,7 @@ function Profile () {
         try {
             const docRef = await addDoc(collection(db, "following"), {
                 "following": username,
-                "follower": currentUser,
+                "follower": currentUser.username,
                 "createdAt": serverTimestamp()
             }).then(data => {
                 setFollowing(data.id)
@@ -74,14 +96,15 @@ function Profile () {
         setOpenDialog(true)
     }
 
-    const handleClose = (event) => {
-        event.preventDefault()
+    const handleClose = () => {
         setOpenDialog(false)
     }
 
     const saveProfile = async (event) => {
         event.preventDefault()
-        await setDoc(doc(db, "userProfile"))
+        await setDoc(doc(db, "userProfile", currentUser.email), profile).then(data => {
+            handleClose()
+        })
     } 
 
     const updateProfile = (event) => {
@@ -93,6 +116,13 @@ function Profile () {
        }))
     }
 
+    const updateImage = (response) => {
+        setProfile(prevState => ({
+            ...prevState,
+            image: response.url
+        }))
+    }
+
     const removeImage = (event) => {
         event.preventDefault();
         setProfile(prevState => ({
@@ -101,18 +131,19 @@ function Profile () {
         }))
     }
 
-    const openFileSelector = (event) => {
-        event.preventDefault()
-        inputFile.current.click()
-    }
-
     return (
         <div className="p-5">
             <div className="flex flex-col space-y-4">
                 <div className="text-lg font-semibold">
                     {profile.username}
                 </div>
-                <img src={profile.image} className="w-20 h-20 object-cover rounded-full"/>
+                {
+                    profile.image
+                    ?
+                    <img src={profile.image} className="w-20 h-20 object-cover rounded-full"/>
+                    :
+                    <User className="border w-20 h-20 bg-gray-100 rounded-full p-5"/>
+                }
                 <div className="flex flex-col">
                     <div>
                         {profile.fullName}
@@ -123,7 +154,7 @@ function Profile () {
                 </div>
                 <div className="w-fit">
                     { 
-                        currentUser == profile.username ? 
+                        currentUser.username == profile.username ? 
                         <div className="button" onClick={openEditForm}>
                             Edit Profile
                         </div>
@@ -155,21 +186,25 @@ function Profile () {
                 </DialogTitle>
 
                 <DialogContent className='h-96 space-y-4'>
-                    {
-                        profile.image ? 
-                        <div className="flex items-center space-x-2">
-                            <img src={profile.image} className="w-20 h-20 object-cover rounded-full" />
-                            <div className="button w-fit" onClick={removeImage}>
-                                Remove Image
+                    <IKContext
+                        urlEndpoint={URLEndpoint}
+                        publicKey={publicKey}
+                        authenticator={authenticateImageKit}
+                    >
+                        {
+                            profile.image ?
+                            <div className="flex items-center space-x-5">
+                                <img src={profile.image} className='w-20 h-20' />
+                                <X className="size-5 bg-gray-100 p-1 rounded-full cursor-pointer" onClick={removeImage}/>
                             </div>
-                        </div>
+                            :
+                            <IKUpload
+                                onError={(err) => console.log(err)}
+                                onSuccess={updateImage}
+                            />
+                        }
+                    </IKContext>
 
-                        :
-                        <button onClick={openFileSelector} className='text-orange-700 font-semibold'>
-                            <input ref={inputFile} type='file' id="image" hidden onChange={updateProfile}/>
-                            Select from your device
-                        </button>
-                    }
                     <TextField
                         autoFocus
                         required

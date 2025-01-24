@@ -4,20 +4,40 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useRef, useState } from 'react';
 import { db } from "../firebase"
-import { addDoc, collection, doc, serverTimestamp, setDoc } from "firebase/firestore"; 
-
+import { addDoc, collection, serverTimestamp } from "firebase/firestore"; 
+import { IKContext, IKUpload } from "imagekitio-react"
 
 function PostForm({open, handleClose}) {
     const inputFile = useRef(null)
     const [file, setFile] = useState()
     const [caption, setCaption] = useState()
+    const URLEndpoint = "https://ik.imagekit.io/pixa/"
+    const publicKey = "public_AZOsWS07COGHjErNayUX76zd4Oc="
+
+    const authenticateImageKit = async () => {
+        try {
+          const response = await fetch('http://localhost:3001/auth');
+    
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+            }
+    
+            const data = await response.json();
+            const { signature, expire, token } = data;
+            return { signature, expire, token };
+        } catch (error) {
+            throw new Error(`Authentication request failed: ${error.message}`);
+        }
+    }
 
     const openFileSelector = () => {
         inputFile.current.click()
     }
 
-    const updateFile = (event) => {
-        setFile(URL.createObjectURL(event.target.files[0]))
+    const updateFile = (response) => {
+       console.log(response)
+       setFile(response.url)
     }
 
     const updateCaption = (event) => {
@@ -59,16 +79,23 @@ function PostForm({open, handleClose}) {
             </DialogTitle>
 
             <DialogContent className='h-96'>
-                <div className='grid grid-cols-2 gap-10 mt-20'>
-                    {
-                        file ? 
-                        <img src={file} />
-                        :
-                        <button onClick={openFileSelector} className='text-orange-700 font-semibold'>
-                            <input ref={inputFile} type='file' hidden onChange={updateFile}/>
-                            Select from your device
-                        </button>
-                    }
+                <div className='grid grid-cols-2 gap-10 mt-5'>
+
+                    <IKContext
+                        urlEndpoint={URLEndpoint}
+                        publicKey={publicKey}
+                        authenticator={authenticateImageKit}
+                    >
+                        {
+                            file ?
+                            <img src={file} className='h-[50%]' />
+                            :
+                            <IKUpload
+                                onError={(err) => console.log(err)}
+                                onSuccess={updateFile}
+                            />
+                        }
+                    </IKContext>
                     
                     <TextField
                         autoFocus

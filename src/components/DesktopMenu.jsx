@@ -8,6 +8,11 @@ import { useState } from 'react'
 function DesktopLayout() {
     const navigate = useNavigate()
     const [open, setOpen] = useState(false);
+    const currentUser = JSON.parse(localStorage.getItem("profile"))
+
+    const openTimeline = () => {
+        navigate("/")
+    }
 
     function openPostForm() {
         setOpen(true)
@@ -15,6 +20,12 @@ function DesktopLayout() {
 
     function closePostForm() {
         setOpen(false)
+    }
+
+    const openProfile = () => {
+        console.log("profile");
+        
+        navigate(`/profile/${currentUser.username}`)
     }
 
     function logout() {
@@ -29,14 +40,14 @@ function DesktopLayout() {
 
     return (
         <div className="w-1/4 pl-5 pt-5">
-            <div className="flex items-center space-x-2 cursor-pointer py-5">
+            <div className="flex items-center space-x-2 cursor-pointer py-5" onClick={openTimeline}>
                 <LayoutDashboard className=""/>
                 <span>
                     Home
                 </span>
             </div>
 
-            <div className="flex items-center space-x-2 cursor-pointer py-5">
+            <div className="flex items-center space-x-2 cursor-pointer py-5" onClick={() => window.location.href = "/search"}>
                 <Search className=""/>
                 <span>
                     Search
@@ -50,7 +61,7 @@ function DesktopLayout() {
                 </span>
             </div>
 
-            <div className="flex items-center space-x-2 cursor-pointer py-5">
+            <div className="flex items-center space-x-2 cursor-pointer py-5" onClick={openProfile}>
                 <UserRound/>
                 <span>
                     Profile
