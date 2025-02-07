@@ -133,107 +133,117 @@ function Profile () {
 
     return (
         <div className="p-5">
-            <div className="flex flex-col space-y-4">
-                <div className="text-lg font-semibold">
-                    {profile.username}
-                </div>
-                {
-                    profile.image
-                    ?
-                    <img src={profile.image} className="w-20 h-20 object-cover rounded-full"/>
-                    :
-                    <User className="border w-20 h-20 bg-gray-100 rounded-full p-5"/>
-                }
-                <div className="flex flex-col">
-                    <div>
-                        {profile.fullName}
-                    </div>
-                    <div>
-                        {profile.bio}
-                    </div>
-                </div>
-                <div className="w-fit">
-                    { 
-                        currentUser.username == profile.username ? 
-                        <div className="button" onClick={openEditForm}>
-                            Edit Profile
+            {
+                profile.fullName
+                ?
+                <div>
+                    <div className="flex flex-col space-y-4">
+                        <div className="text-lg font-semibold">
+                            {profile.username}
                         </div>
-                        : following ? 
-                        <div className="button" onClick={unfollowProfile}>
-                            Unfollow
-                        </div> 
-                        :
-                        <div className="button" onClick={followProfile}>
-                            Follow
-                        </div>
-                    }
-                </div>
-            </div>
-            <Dialog
-                open={openDialog}
-                onClose={handleClose}
-                fullWidth
-                maxWidth="md"
-                PaperProps={{
-                    component: "form",
-                }}
-            >
-                <DialogTitle className='flex justify-between'>
-                    Edit Your Profile
-                    <button className='text-orange-700 font-semibold' type="submit" onClick={saveProfile}>
-                        Save
-                    </button>
-                </DialogTitle>
-
-                <DialogContent className='h-96 space-y-4'>
-                    <IKContext
-                        urlEndpoint={URLEndpoint}
-                        publicKey={publicKey}
-                        authenticator={authenticateImageKit}
-                    >
                         {
-                            profile.image ?
-                            <div className="flex items-center space-x-5">
-                                <img src={profile.image} className='w-20 h-20' />
-                                <X className="size-5 bg-gray-100 p-1 rounded-full cursor-pointer" onClick={removeImage}/>
-                            </div>
+                            profile.image
+                            ?
+                            <img src={profile.image} className="w-20 h-20 object-cover rounded-full"/>
                             :
-                            <IKUpload
-                                onError={(err) => console.log(err)}
-                                onSuccess={updateImage}
-                            />
+                            <User className="border w-20 h-20 bg-gray-100 rounded-full p-5"/>
                         }
-                    </IKContext>
-
-                    <TextField
-                        autoFocus
-                        required
-                        margin="dense"
-                        id="fullName"
-                        name="fullName"
-                        label="Full Name"
-                        type="text"
-                        value={profile.fullName}
+                        <div className="flex flex-col">
+                            <div>
+                                {profile.fullName}
+                            </div>
+                            <div>
+                                {profile.bio}
+                            </div>
+                        </div>
+                        <div className="w-fit">
+                            { 
+                                currentUser.username == profile.username ? 
+                                <div className="button" onClick={openEditForm}>
+                                    Edit Profile
+                                </div>
+                                : following ? 
+                                <div className="button" onClick={unfollowProfile}>
+                                    Unfollow
+                                </div> 
+                                :
+                                <div className="button" onClick={followProfile}>
+                                    Follow
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <Dialog
+                        open={openDialog}
+                        onClose={handleClose}
                         fullWidth
-                        variant="standard"
-                        onChange={updateProfile}
-                        />
+                        maxWidth="md"
+                        PaperProps={{
+                            component: "form",
+                        }}
+                    >
+                        <DialogTitle className='flex justify-between'>
+                            Edit Your Profile
+                            <button className='text-orange-700 font-semibold' type="submit" onClick={saveProfile}>
+                                Save
+                            </button>
+                        </DialogTitle>
 
-                    <TextField
-                        autoFocus
-                        required
-                        margin="dense"
-                        id="bio"
-                        name="bio"
-                        label="Bio"
-                        type="text"
-                        value={profile.bio}
-                        fullWidth
-                        variant="standard"
-                        onChange={updateProfile}
-                        />
-                </DialogContent>
-            </Dialog>
+                        <DialogContent className='h-96 space-y-4'>
+                            <IKContext
+                                urlEndpoint={URLEndpoint}
+                                publicKey={publicKey}
+                                authenticator={authenticateImageKit}
+                            >
+                                {
+                                    profile.image ?
+                                    <div className="flex items-center space-x-5">
+                                        <img src={profile.image} className='w-20 h-20' />
+                                        <X className="size-5 bg-gray-100 p-1 rounded-full cursor-pointer" onClick={removeImage}/>
+                                    </div>
+                                    :
+                                    <IKUpload
+                                        onError={(err) => console.log(err)}
+                                        onSuccess={updateImage}
+                                    />
+                                }
+                            </IKContext>
+
+                            <TextField
+                                autoFocus
+                                required
+                                margin="dense"
+                                id="fullName"
+                                name="fullName"
+                                label="Full Name"
+                                type="text"
+                                value={profile.fullName}
+                                fullWidth
+                                variant="standard"
+                                onChange={updateProfile}
+                                />
+
+                            <TextField
+                                autoFocus
+                                required
+                                margin="dense"
+                                id="bio"
+                                name="bio"
+                                label="Bio"
+                                type="text"
+                                value={profile.bio}
+                                fullWidth
+                                variant="standard"
+                                onChange={updateProfile}
+                                />
+                        </DialogContent>
+                    </Dialog>
+                </div>
+                :
+                <div className="text-center mt-40">
+                    Loading ...
+                </div>
+            }
         </div>
     )
 }

@@ -41,12 +41,6 @@ function Search() {
         console.log(searchResults);
         
     }
-
-    const navigateToProfile = (profile) => {
-        console.log(profile);
-        
-        /* navigate(`/profile/${profile.username}`) */
-    }
    
     return (
         <div>

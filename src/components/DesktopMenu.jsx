@@ -7,6 +7,7 @@ import { useState } from 'react'
 
 function DesktopLayout() {
     const navigate = useNavigate()
+    
     const [open, setOpen] = useState(false);
     const currentUser = JSON.parse(localStorage.getItem("profile"))
 

@@ -3,9 +3,9 @@ import useScreenSize from "./utils/screenSize"
 import DesktopLayout from "./components/DesktopLayout"
 import MobileLayout from "./components/MobileLayout"
 import { useEffect } from 'react'
-import { auth } from './firebase' 
+import { auth } from './firebase'
 import { Routes, Route } from 'react-router-dom';
-import Signup from "./pages/Signup"; 
+import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile"
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -18,38 +18,46 @@ function App() {
   const location = useLocation()
   const [user, loading] = useAuthState(auth);
   const screenSize = useScreenSize()
-  
+
   useEffect(() => {
     authenticateUser()
-  }, [])
+  }, [loading])
 
   const authenticateUser = () => {
     try {
-      if(!loading && (!auth.currentUser || location.pathname != "/signup")) {
+      console.log(loading, auth.currentUser);
+
+      if (!loading && !auth.currentUser && location.pathname != "/signup") {
         navigate("/login")
       }
     } catch (e) {
-        console.error(e);
+      console.error(e);
     }
   }
 
-  
+
 
   const Layout = ({ children }) => {
-    return screenSize.width < 640 ? (
-      <MobileLayout>{children}</MobileLayout>
-    ) : (
-      <DesktopLayout>{children}</DesktopLayout>
-    );
+    if (loading) {
+      return (
+        <div className='text-center mt-52'>
+          Loading ...
+        </div>
+      )
+    } else if (screenSize.width < 640) {
+      return <MobileLayout>{children}</MobileLayout>
+    } else {
+      return <DesktopLayout>{children}</DesktopLayout>
+    }
   };
 
   return (
     <Layout>
       <Routes>
-        <Route path="/signup" element={ <Signup />}/>
-        <Route path="/login" element={ <Login /> }/>
-        <Route path="/profile/:username" element={ <Profile /> } />
-        <Route path="/search" element={<Search />}/>
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile/:username" element={<Profile />} />
+        <Route path="/search" element={<Search />} />
         <Route path="/" element={<PostList />} />
       </Routes>
     </Layout>
