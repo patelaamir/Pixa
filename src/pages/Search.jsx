@@ -38,12 +38,11 @@ function Search() {
             return user.username.toLowerCase().includes(search.toLowerCase()) || user.fullName.toLowerCase().includes(search.toLowerCase())
         })
         setSearchResults(results)
-        console.log(searchResults);
         
     }
    
     return (
-        <div>
+        <div className='mt-10'>
             <TextField
                 autoFocus
                 margin="dense"
@@ -64,7 +63,7 @@ function Search() {
                             {
                                 profile.image
                                 ?
-                                <img src={profile.image} className='w-8 h-8 rounded-full'/>
+                                <img src={profile.image} className='w-8 h-8 rounded-full object-cover'/>
                                 :
                                 <User className='w-8 h-8 p-1 bg-gray-100 rounded-full stroke-1'/>
                             }

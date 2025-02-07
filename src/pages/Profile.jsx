@@ -1,5 +1,5 @@
 import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc, doc, setDoc } from "firebase/firestore";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
 import { db } from "../firebase";
 import Dialog from '@mui/material/Dialog';
@@ -13,6 +13,7 @@ import { IKContext, IKUpload } from "imagekitio-react"
 function Profile () {
     const { username } = useParams();
     const [profile, setProfile] = useState({})
+    const [posts, setPosts] = useState([])
     const [following, setFollowing] = useState(false)
     const [openDialog, setOpenDialog] = useState(false)
     const currentUser = JSON.parse(localStorage.getItem("profile"));
@@ -22,6 +23,7 @@ function Profile () {
 
     useEffect(() => {
         getProfileData()
+        getPosts()
     }, [username])
     
 
@@ -38,6 +40,17 @@ function Profile () {
         } catch(err) {
             console.log(err)
         }
+    }
+
+    const getPosts = async () => {
+        let postsSnapshot = await getDocs(query(collection(db, "posts"), where("username", "==", username)))
+        let postResult = postsSnapshot.docs.map(doc => {
+            return {
+                id: doc.id,
+                ...doc.data()
+            }
+        })
+        setPosts(postResult)
     }
 
     const authenticateImageKit = async () => {
@@ -136,24 +149,26 @@ function Profile () {
             {
                 profile.fullName
                 ?
-                <div>
-                    <div className="flex flex-col space-y-4">
-                        <div className="text-lg font-semibold">
-                            {profile.username}
-                        </div>
-                        {
-                            profile.image
-                            ?
-                            <img src={profile.image} className="w-20 h-20 object-cover rounded-full"/>
-                            :
-                            <User className="border w-20 h-20 bg-gray-100 rounded-full p-5"/>
-                        }
-                        <div className="flex flex-col">
-                            <div>
-                                {profile.fullName}
+                <div className="">
+                    <div className="flex flex-col space-y-10">
+                        <div className="space-y-4">
+                            <div className="text-lg font-semibold">
+                                {profile.username}
                             </div>
-                            <div>
-                                {profile.bio}
+                            {
+                                profile.image
+                                ?
+                                <img src={profile.image} className="w-20 h-20 object-cover rounded-full"/>
+                                :
+                                <User className="border w-20 h-20 bg-gray-100 rounded-full p-5"/>
+                            }
+                            <div className="flex flex-col">
+                                <div>
+                                    {profile.fullName}
+                                </div>
+                                <div>
+                                    {profile.bio}
+                                </div>
                             </div>
                         </div>
                         <div className="w-fit">
@@ -170,6 +185,17 @@ function Profile () {
                                 <div className="button" onClick={followProfile}>
                                     Follow
                                 </div>
+                            }
+                        </div>
+                        <div className="grid grid-cols-3 gap-10">
+                            {
+                                posts.map(post => {
+                                    return (
+                                       <a href={`/post/${post.id}`} className="h-[100%]">
+                                            <img src={post.imageUrl} />
+                                        </a>
+                                    )
+                                })
                             }
                         </div>
                     </div>
@@ -240,9 +266,12 @@ function Profile () {
                     </Dialog>
                 </div>
                 :
-                <div className="text-center mt-40">
-                    Loading ...
-                </div>
+                <div className="flex flex-col items-center justify-center space-y-2 mt-60 text-gray-500">
+                    <img src="../public/loading.gif" className="size-5"/>
+                    <span>
+                    Loading
+                </span>
+            </div>
             }
         </div>
     )

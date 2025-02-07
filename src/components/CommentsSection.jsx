@@ -69,8 +69,8 @@ function CommentsSection({open, post, handleClose}) {
                 Comments
             </DialogTitle>
 
-            <DialogContent className='flex flex-col h-96'>
-                <div className='space-y-4'>
+            <DialogContent className='flex flex-col relative'>
+                <div className='flex-1 space-y-4 overflow-y-auto'>
                     {
                         comments.map(comment => (
                             <div key={comment.id} className='flex flex-col space-y-1'>
@@ -94,7 +94,7 @@ function CommentsSection({open, post, handleClose}) {
                         ))
                     }
                 </div>
-                <div className='flex space-x-4 mt-auto'>
+                <div className='flex items-center space-x-4 p-2 border-t sticky bottom-0 bg-white'>
                     <TextField
                         autoFocus
                         margin="dense"
