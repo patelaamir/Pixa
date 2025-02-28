@@ -1,12 +1,15 @@
-import { Heart, MessageCircle } from "lucide-react"
+import { Heart, MessageCircle, EllipsisVertical } from "lucide-react"
 import { useEffect, useState } from "react"
 import CommentsSection from "./CommentsSection"
 import { getDocs, query, collection, where, deleteDoc, doc, addDoc } from "firebase/firestore"
 import { db } from "../firebase"
-
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 const Post = ({ post }) => {
     const [postInfo, setPostInfo] = useState(post)
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl);
     const [isLoading, updateLoading] = useState(true)
     const [openCommentsSection, showCommentsSection] = useState(false)
     const [commentsFor, setCommentsFor] = useState(null)
@@ -15,6 +18,14 @@ const Post = ({ post }) => {
     useEffect(() => {
         getPostInfo()
     }, [post])
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     const getPostInfo = async() => {
         const likesSnapShot = await getDocs(query(collection(db, "likes"), where("postID", "==", post.id)))
@@ -77,6 +88,18 @@ const Post = ({ post }) => {
         }
     }
 
+    const deletePost = async (post) => {
+        await deleteDoc(doc(db, "posts", post.id))
+        window.location.href = `/profile/${currentUser.username}`
+    }
+
+    const options = [
+        {
+            "label": 'Delete',
+            "action": deletePost
+        }
+    ];
+
 
     return (
         <div>
@@ -91,10 +114,36 @@ const Post = ({ post }) => {
                 </div>
                 :
                 <div key={postInfo.id}>
-                    <a className="font-semibold py-2" href={`/profile/${postInfo.username}`}>
-                        {postInfo.username}
-                    </a>
-                    <img src={postInfo.imageUrl} className="w-full"/>
+                    <div className="flex items-center justify-between">
+                        <a className="font-semibold" href={`/profile/${postInfo.username}`}>
+                            {postInfo.username}
+                        </a>
+                        <EllipsisVertical className={`size-4 cursor-pointer ${currentUser.username == postInfo.username ? "block" : "hidden"}`} onClick={handleClick}/>
+                        <Menu
+                            id="long-menu"
+                            MenuListProps={{
+                            'aria-labelledby': 'long-button',
+                            }}
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            slotProps={{
+                            paper: {
+                                style: {
+                                    width: '10rem',
+                                    fontSize: '14px'
+                                },
+                            },
+                            }}
+                        >
+                            {options.map((option) => (
+                            <MenuItem key={option.label} onClick={() => option.action(postInfo)}>
+                                {option.label}
+                            </MenuItem>
+                            ))}
+                        </Menu>
+                    </div>
+                    <img src={postInfo.imageUrl} className="mt-4 w-full h-auto"/>
                     <div className="my-2">
                         <span className="font-semibold mr-1.5">
                             {postInfo.username}

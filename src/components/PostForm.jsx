@@ -6,6 +6,7 @@ import { useRef, useState } from 'react';
 import { db } from "../firebase"
 import { addDoc, collection, serverTimestamp } from "firebase/firestore"; 
 import { IKContext, IKUpload } from "imagekitio-react"
+import { Filter } from 'bad-words'
 
 function PostForm({open, handleClose}) {
     const inputFile = useRef(null)
@@ -13,6 +14,7 @@ function PostForm({open, handleClose}) {
     const [caption, setCaption] = useState()
     const URLEndpoint = "https://ik.imagekit.io/pixa/"
     const publicKey = "public_AZOsWS07COGHjErNayUX76zd4Oc="
+    const filter = new Filter();
 
     const authenticateImageKit = async () => {
         try {
@@ -46,6 +48,12 @@ function PostForm({open, handleClose}) {
     const savePost = async (event) => {
         event.preventDefault()
         try {
+
+            if (filter.isProfane(caption)) {
+                alert("Vulgar content is not allowed!");
+                return;
+            }
+
             const docRef =  await addDoc(collection(db, "posts"), {
                 caption: caption,
                 imageUrl: file,
@@ -53,6 +61,7 @@ function PostForm({open, handleClose}) {
                 createdAt: serverTimestamp()
             }).then(data => {
                 handleClose()
+                window.location.href = `/post/${data.id}`
             })
         } catch(error) {
             console.log(error)
@@ -78,8 +87,8 @@ function PostForm({open, handleClose}) {
                 </button>
             </DialogTitle>
 
-            <DialogContent className='h-96'>
-                <div className='grid grid-cols-2 gap-10 mt-5'>
+            <DialogContent className='h-5/6'>
+                <div className=''>
 
                     <IKContext
                         urlEndpoint={URLEndpoint}
@@ -88,12 +97,16 @@ function PostForm({open, handleClose}) {
                     >
                         {
                             file ?
-                            <img src={file} className='h-[50%]' />
+                            <div className='border p-5 h-80 flex justify-center items-center '>
+                                 <img src={file} className='h-[100%]' />
+                            </div>
                             :
-                            <IKUpload
-                                onError={(err) => console.log(err)}
-                                onSuccess={updateFile}
-                            />
+                            <div className='border p-5 h-80 flex justify-center items-center '>
+                                <IKUpload
+                                    onError={(err) => console.log(err)}
+                                    onSuccess={updateFile}
+                                />
+                            </div>
                         }
                     </IKContext>
                     

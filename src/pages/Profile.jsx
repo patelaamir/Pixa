@@ -1,13 +1,8 @@
-import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc, doc, setDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc, doc, setDoc, getCountFromServer } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
 import { db } from "../firebase";
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import { TextField } from '@mui/material';
 import { User, X } from "lucide-react";
-import { IKContext, IKUpload } from "imagekitio-react"
 
 
 function Profile () {
@@ -15,15 +10,14 @@ function Profile () {
     const [profile, setProfile] = useState({})
     const [posts, setPosts] = useState([])
     const [following, setFollowing] = useState(false)
-    const [openDialog, setOpenDialog] = useState(false)
+    const [followerCount, setFollowerCount] = useState(0)
+    const [followingCount, setFollowingCount] = useState(0)
     const currentUser = JSON.parse(localStorage.getItem("profile"));
-    const URLEndpoint = "https://ik.imagekit.io/pixa/"
-    const publicKey = "public_AZOsWS07COGHjErNayUX76zd4Oc="
-
-
+   
     useEffect(() => {
         getProfileData()
-        getPosts()
+        getFollowerCount()
+        getFollowingCount()
     }, [username])
     
 
@@ -33,9 +27,15 @@ function Profile () {
             const querySnapShot = await getDocs(q)
             querySnapShot.forEach(async doc => {
                 let data = await doc.data()
-                console.log(data, data.fullName)
                 setProfile(data)
-                checkIfFollowing()
+                if (currentUser.username == username) {
+                    getPosts()
+                } else if (!data.private) {
+                    getPosts()
+                } else {
+                    checkIfFollowing()
+                }
+                
             })
         } catch(err) {
             console.log(err)
@@ -53,21 +53,14 @@ function Profile () {
         setPosts(postResult)
     }
 
-    const authenticateImageKit = async () => {
-        try {
-          const response = await fetch('http://localhost:3001/auth');
-    
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-            }
-    
-            const data = await response.json();
-            const { signature, expire, token } = data;
-            return { signature, expire, token };
-        } catch (error) {
-            throw new Error(`Authentication request failed: ${error.message}`);
-        }
+    const getFollowerCount = async () => {
+        const snapShot = await getCountFromServer(query(collection(db, "following"), where("following", "==", username)))
+        setFollowerCount(snapShot.data().count)
+    }
+
+    const getFollowingCount = async () => {
+        const snapShot = await getCountFromServer(query(collection(db, "following"), where("follower", "==", username)))
+        setFollowingCount(snapShot.data().count)
     }
 
     const checkIfFollowing = async () => {
@@ -76,6 +69,7 @@ function Profile () {
         querySnapShot.forEach(doc => {
             if (doc) {
                 setFollowing(doc.id)
+                getPosts()
             }
         })
     }
@@ -89,6 +83,8 @@ function Profile () {
                 "createdAt": serverTimestamp()
             }).then(data => {
                 setFollowing(data.id)
+                getPosts()
+                getFollowerCount()
             })
         } catch (err) {
             console.log(err)
@@ -100,48 +96,10 @@ function Profile () {
         if (following) {
             await deleteDoc(doc(db, "following", following)).then(data => {
                 setFollowing(false)
+                setPosts([])
+                getFollowerCount()
             })
         }
-    }
-
-    const openEditForm = (event) => {
-        event.preventDefault()
-        setOpenDialog(true)
-    }
-
-    const handleClose = () => {
-        setOpenDialog(false)
-    }
-
-    const saveProfile = async (event) => {
-        event.preventDefault()
-        await setDoc(doc(db, "userProfile", currentUser.email), profile).then(data => {
-            handleClose()
-        })
-    } 
-
-    const updateProfile = (event) => {
-        let id = event.target.id
-        let value = id == "image" ? URL.createObjectURL(event.target.files[0]) : event.target.value
-       setProfile(prevState => ({
-            ...prevState,
-            [id]: value
-       }))
-    }
-
-    const updateImage = (response) => {
-        setProfile(prevState => ({
-            ...prevState,
-            image: response.url
-        }))
-    }
-
-    const removeImage = (event) => {
-        event.preventDefault();
-        setProfile(prevState => ({
-           ...prevState,
-           "image": null 
-        }))
     }
 
     return (
@@ -150,33 +108,60 @@ function Profile () {
                 profile.fullName
                 ?
                 <div className="">
-                    <div className="flex flex-col space-y-10">
-                        <div className="space-y-4">
+                    <div className="flex flex-col space-y-5">
+                    <div className="space-y-4">
                             <div className="text-lg font-semibold">
                                 {profile.username}
                             </div>
-                            {
-                                profile.image
-                                ?
-                                <img src={profile.image} className="w-20 h-20 object-cover rounded-full"/>
-                                :
-                                <User className="border w-20 h-20 bg-gray-100 rounded-full p-5"/>
-                            }
-                            <div className="flex flex-col">
-                                <div>
+                            <div className="flex space-x-10">
+                                {
+                                    profile.image
+                                    ?
+                                    <img src={profile.image} className="w-20 h-20 object-cover rounded-full"/>
+                                    :
+                                    <User className="border w-20 h-20 bg-gray-100 rounded-full p-5"/>
+                                }
+                                <div className="flex items-center space-x-10">
+                                    <div className="flex flex-col items-center">
+                                        <span>
+                                            Posts
+                                        </span>
+                                        <span className="font-semibold">
+                                            { posts.length }
+                                        </span>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <span>
+                                            Followers
+                                        </span>
+                                        <span className="font-semibold">
+                                            { followerCount }
+                                        </span>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <span>
+                                            Following
+                                        </span>
+                                        <span className="font-semibold">
+                                            { followingCount }
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex flex-col space-y-2">
+                                <div className="font-medium">
                                     {profile.fullName}
                                 </div>
-                                <div>
+                                <div className="text-sm">
                                     {profile.bio}
                                 </div>
                             </div>
                         </div>
+                        
                         <div className="w-fit">
                             { 
                                 currentUser.username == profile.username ? 
-                                <div className="button" onClick={openEditForm}>
-                                    Edit Profile
-                                </div>
+                                ""
                                 : following ? 
                                 <div className="button" onClick={unfollowProfile}>
                                     Unfollow
@@ -187,83 +172,32 @@ function Profile () {
                                 </div>
                             }
                         </div>
-                        <div className="grid grid-cols-3 gap-10">
-                            {
-                                posts.map(post => {
-                                    return (
-                                       <a href={`/post/${post.id}`} className="h-[100%]">
-                                            <img src={post.imageUrl} />
-                                        </a>
-                                    )
-                                })
-                            }
-                        </div>
-                    </div>
-                    <Dialog
-                        open={openDialog}
-                        onClose={handleClose}
-                        fullWidth
-                        maxWidth="md"
-                        PaperProps={{
-                            component: "form",
-                        }}
-                    >
-                        <DialogTitle className='flex justify-between'>
-                            Edit Your Profile
-                            <button className='text-orange-700 font-semibold' type="submit" onClick={saveProfile}>
-                                Save
-                            </button>
-                        </DialogTitle>
-
-                        <DialogContent className='h-96 space-y-4'>
-                            <IKContext
-                                urlEndpoint={URLEndpoint}
-                                publicKey={publicKey}
-                                authenticator={authenticateImageKit}
-                            >
+                        <div className="">
+                            <div className="text-xl font-semibold mb-5">
+                                Posts
+                            </div>
+                            <div className="grid grid-cols-3 gap-10">
                                 {
-                                    profile.image ?
-                                    <div className="flex items-center space-x-5">
-                                        <img src={profile.image} className='w-20 h-20' />
-                                        <X className="size-5 bg-gray-100 p-1 rounded-full cursor-pointer" onClick={removeImage}/>
-                                    </div>
-                                    :
-                                    <IKUpload
-                                        onError={(err) => console.log(err)}
-                                        onSuccess={updateImage}
-                                    />
+                                    posts.map(post => {
+                                        return (
+                                        <a href={`/post/${post.id}`} className="">
+                                                <img src={post.imageUrl} className="max-h-96"/>
+                                            </a>
+                                        )
+                                    })
                                 }
-                            </IKContext>
-
-                            <TextField
-                                autoFocus
-                                required
-                                margin="dense"
-                                id="fullName"
-                                name="fullName"
-                                label="Full Name"
-                                type="text"
-                                value={profile.fullName}
-                                fullWidth
-                                variant="standard"
-                                onChange={updateProfile}
-                                />
-
-                            <TextField
-                                autoFocus
-                                required
-                                margin="dense"
-                                id="bio"
-                                name="bio"
-                                label="Bio"
-                                type="text"
-                                value={profile.bio}
-                                fullWidth
-                                variant="standard"
-                                onChange={updateProfile}
-                                />
-                        </DialogContent>
-                    </Dialog>
+                            </div>
+                        </div>
+                        {
+                            !following && profile.private
+                            ?
+                            <div className="text-gray-600">
+                                This account is Private
+                            </div>
+                            :
+                            ''
+                        }
+                    </div>
                 </div>
                 :
                 <div className="flex flex-col items-center justify-center space-y-2 mt-60 text-gray-500">

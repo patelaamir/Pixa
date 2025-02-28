@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import useScreenSize from "../utils/screenSize"
-import { addDoc, collection, deleteDoc, doc, getDocs, query, where } from "firebase/firestore"
+import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, where } from "firebase/firestore"
 import { db } from "../firebase"
 import Post from "./Post"
 
@@ -8,7 +8,7 @@ const PostList = () => {
     const screenSize = useScreenSize()
     const [posts, setPosts] = useState([])
     const [postsLoading, setPostsLoading] = useState(false)
-    
+
     const currentUser = JSON.parse(localStorage.getItem("profile"))
 
     useEffect(() => {
@@ -19,7 +19,7 @@ const PostList = () => {
                 const following = followingSnapShot.docs.map(doc => doc.data().following)
 
                 if (following.length) {
-                    const querySnapShot = await getDocs(query(collection(db, "posts"), where("username", "in", following)));
+                    const querySnapShot = await getDocs(query(collection(db, "posts"), where("username", "in", following), orderBy("createdAt", "desc")));
                     let postsArray = querySnapShot.docs.map((doc) => {
                         return {
                             id: doc.id,
@@ -53,7 +53,7 @@ const PostList = () => {
             {
                 posts.length 
                 ?
-                <div className={ `flex flex-col space-y-10 ${screenSize.width < 640 ? 'w-full' : 'w-1/2'}`  }>
+                <div className={ `flex flex-col space-y-20 ${screenSize.width < 640 ? 'px-5' : 'w-1/3'}`  }>
                 {renderedPosts}
                 </div>
                 :
@@ -66,7 +66,7 @@ const PostList = () => {
                 </span>
             </div>
                 :
-                <div className="flex items-center justify-center mt-52">
+                <div className="flex items-center justify-center mt-10 py-20 px-10 bg-gray-100 rounded-md">
                     No posts found. Please  <a href="/search" className="mx-1 text-orange-600"> search </a> for friends and follow them.
                 </div>
             }

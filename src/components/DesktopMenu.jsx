@@ -1,14 +1,16 @@
-import { LayoutDashboard, CirclePlus, UserRound, LogOut, Search } from "lucide-react"
+import { LayoutDashboard, CirclePlus, UserRound, LogOut, Search, Bolt } from "lucide-react"
 import { auth } from "../firebase"
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import PostForm from "../components/PostForm"
 import { useState } from 'react'
+import Settings from "./Settings";
 
 function DesktopLayout() {
     const navigate = useNavigate()
     
-    const [open, setOpen] = useState(false);
+    const [openProfileForm, toggleProfileForm] = useState(false);
+    const [openSettingsModal, toggleSettings] = useState(false)
     const currentUser = JSON.parse(localStorage.getItem("profile"))
 
     const openTimeline = () => {
@@ -16,17 +18,23 @@ function DesktopLayout() {
     }
 
     function openPostForm() {
-        setOpen(true)
+        toggleProfileForm(true)
     }
 
     function closePostForm() {
-        setOpen(false)
+        toggleProfileForm(false)
     }
 
     const openProfile = () => {
-        console.log("profile");
-        
         navigate(`/profile/${currentUser.username}`)
+    }
+
+    function openSettings() {
+        toggleSettings(true)
+    }
+
+    function closeSettings() {
+        toggleSettings(false)
     }
 
     function logout() {
@@ -40,8 +48,8 @@ function DesktopLayout() {
     }
 
     return (
-        <div className="w-1/4 pl-5 pt-5">
-            <div className="flex items-center space-x-2 cursor-pointer py-5" onClick={openTimeline}>
+        <div className="pl-5 pt-5">
+            <div className="flex items-center space-x-2 cursor-pointer pb-5" onClick={openTimeline}>
                 <LayoutDashboard className=""/>
                 <span>
                     Home
@@ -68,13 +76,20 @@ function DesktopLayout() {
                     Profile
                 </span>
             </div>
+            <div className="flex items-center space-x-2 cursor-pointer py-5" onClick={openSettings}>
+                <Bolt/>
+                <span>
+                    Settings
+                </span>
+            </div>
             <div onClick={logout} className="flex items-center space-x-2 cursor-pointer py-5">
                 <LogOut />
                 <span>
                     Logout
                 </span>
             </div>
-            <PostForm open={open} handleClose={closePostForm} />
+            <PostForm open={openProfileForm} handleClose={closePostForm} />
+            <Settings open={openSettingsModal} handleClose={closeSettings} />
         </div>
     )
 }

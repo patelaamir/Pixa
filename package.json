@@ -12,6 +12,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^6.3.0",
+    "bad-words": "^4.0.0",
     "dayjs": "^1.11.13",
     "express": "^4.21.2",
     "firebase": "^10.13.2",

@@ -8,13 +8,13 @@ function DesktopLayout({children}) {
     return (
         <div className='px-5'>
           <Header/>
-          <div className={!["/signup", "/login"].includes(location.pathname) ? 'flex' : '' }>
+          <div className={!["/signup", "/login"].includes(location.pathname) ? 'grid grid-cols-[20%,80%]' : '' }>
             {
               !["/signup", "/login"].includes(location.pathname) 
               &&
               <DesktopMenu />
             }
-            <div className="w-full">
+            <div className="">
               {children}
             </div>
             <div className="w-1/4"></div>

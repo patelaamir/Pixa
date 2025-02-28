@@ -3,10 +3,12 @@ import { db } from "../firebase";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Post from "../components/Post";
+import useScreenSize from "../utils/screenSize"
 
 function PostDetail( ) {
     const { postID } = useParams();
     const [post, setPost] = useState(null)
+    const screenSize = useScreenSize()
 
     useEffect(() => {
         getPost()
@@ -27,7 +29,7 @@ function PostDetail( ) {
     }
 
     return (
-        <div className="w-1/3 mx-auto mt-10">
+        <div className={`mt-5 ${screenSize.width < 640 ? 'w-full' : 'w-1/3'}`}>
            {
             post
             ?

@@ -5,10 +5,24 @@ import { useNavigate } from "react-router-dom"
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useEffect } from 'react'
 
-function Login() {
+function Login () {
     const navigate = useNavigate()
     const [user, loading] = useAuthState(auth);
     console.log(user)
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.keyCode === 13) {
+                handleLogin(event);
+            }
+        };
+    
+        document.addEventListener("keydown", handleKeyDown);
+    
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, []);
 
     useEffect(() => {
         if (!loading && user) {
@@ -16,10 +30,18 @@ function Login() {
         }
     }, [loading])
 
+
     const handleLogin = (e) => {
         e.preventDefault()
+        console.log("handlelogin")
         let email = document.getElementById("email").value
         let password = document.getElementById("password").value
+
+        if (!email || !password) {
+            alert("Please enter your Email and Password.")
+            return
+        }
+
         signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const currentUser = userCredential.user;

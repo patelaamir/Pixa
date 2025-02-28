@@ -10,6 +10,20 @@ function Signup() {
     const [user, loading] = useAuthState(auth);
 
     useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.keyCode === 13) {
+                handleSignup(event);
+            }
+        };
+    
+        document.addEventListener("keydown", handleKeyDown);
+    
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, []);
+
+    useEffect(() => {
         if (!loading && user) {
             navigate("/")
         }
@@ -19,6 +33,12 @@ function Signup() {
         e.preventDefault()
         let email = document.getElementById("email").value
         let password = document.getElementById("password").value
+        let fullName = document.getElementById("fullName").value
+
+        if (!email || !password || !fullName) {
+            alert("Please enter your Full Name, Email and Password")
+        }
+
         createUserWithEmailAndPassword(auth, email, password).then((userCredentials) => {
             const user = userCredentials.user
             createUserProfile(email)
@@ -33,7 +53,8 @@ function Signup() {
         let profile = {
             fullName: fullName,
             username: username,
-            email: email
+            email: email,
+            private: true
         }
         await setDoc(doc(db, "userProfile", email), profile);
         localStorage.setItem("profile", JSON.stringify(profile))

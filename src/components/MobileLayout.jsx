@@ -1,16 +1,28 @@
 import { useState } from 'react'
 import Header from './Header'
 import Menu from './Menu'
+import { useLocation } from "react-router-dom"
 import PostList from './PostList'
 
-function MobileLayout(props) {  
-      return (
-        <div className='px-5'>
-          <Header/>
-          <PostList posts={props.posts}/>
-          <Menu/>
-        </div>
-      )
+function MobileLayout({ children }) {  
+  const location = useLocation()
+
+    return (
+      <div className='px-5 mb-20'>
+        <Header/>
+        <div>
+          
+          <div className="">
+            {children}
+          </div>
+        {
+          !["/signup", "/login"].includes(location.pathname) 
+          &&
+          <Menu />
+        }
+      </div>
+    </div>
+    )
 }
 
 export default MobileLayout
