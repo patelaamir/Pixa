@@ -4,11 +4,12 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom"
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useEffect } from 'react'
+import useScreenSize from "../utils/screenSize";
 
 function Login () {
     const navigate = useNavigate()
     const [user, loading] = useAuthState(auth);
-    console.log(user)
+    const screenSize = useScreenSize()
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -61,7 +62,7 @@ function Login () {
     }
 
     return(
-        <div className="flex flex-col w-1/4 mx-auto text-center shadow-xl rounded-lg mt-20 p-5">
+        <div className={`flex flex-col mx-auto text-center shadow-xl rounded-lg mt-20 p-5 ${screenSize.width < 640 ? 'w-full' : 'w-1/4'}`}>
             <div className="font-semibold text-xl mb-2">
                 Login
             </div>

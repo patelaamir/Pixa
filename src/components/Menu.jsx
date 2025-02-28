@@ -1,7 +1,9 @@
 import { LayoutDashboard, CirclePlus, UserRound, LogOut, Search, Bolt } from "lucide-react"
 import PostForm from "./PostForm"
 import Settings from "./Settings"
+import { auth } from "../firebase"
 import { useState } from "react"
+import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
 const Menu =  () => {
