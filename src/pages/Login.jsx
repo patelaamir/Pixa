@@ -73,11 +73,15 @@ function Login () {
                 <input className="border rounded-md py-2 px-4 w-full"
                     type="email" 
                     id="email" 
-                    placeholder="Email"/>
+                    placeholder="Email"
+                    onFocus={(e) => e.target.setAttribute("autocomplete", "off")}
+                />
                 <input className="border rounded-md py-2 px-4 w-full"
                     type="password"
                     id="password"
-                    placeholder="Password"/>
+                    placeholder="Password"
+                    onFocus={(e) => e.target.setAttribute("autocomplete", "off")}
+                />
                 <button 
                     onClick={handleLogin}
                     className="button">

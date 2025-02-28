@@ -81,18 +81,21 @@ function Signup() {
                     className="border rounded-md py-2 px-4 w-full" 
                     id="fullName" 
                     placeholder="Full Name"/>
+                     onFocus={(e) => e.target.setAttribute("autocomplete", "off")}
 
                 <input 
                     className="border rounded-md py-2 px-4 w-full" 
                     type="email" 
                     id="email" 
                     placeholder="Email" />
+                     onFocus={(e) => e.target.setAttribute("autocomplete", "off")}
 
                 <input 
                     className="border rounded-md py-2 px-4 w-full" 
                     type="password" 
                     id="password" 
                     placeholder="Password" /> 
+                     onFocus={(e) => e.target.setAttribute("autocomplete", "off")}
                 <button
                     onClick={handleSignup}
                     className="button">
