@@ -69,18 +69,18 @@ function Login () {
             <div className="text-sm mb-5">
                 Enter your detils to login into your account
             </div>
-            <div className="space-y-4">
+            <form autoComplete="off" className="space-y-4">
                 <input className="border rounded-md py-2 px-4 w-full"
                     type="email" 
                     id="email" 
                     placeholder="Email"
-                    onFocus={(e) => e.target.setAttribute("autocomplete", "off")}
+                    onFocus={(e) => e.target.removeAttribute("readonly")}
                 />
                 <input className="border rounded-md py-2 px-4 w-full"
                     type="password"
                     id="password"
                     placeholder="Password"
-                    onFocus={(e) => e.target.setAttribute("autocomplete", "off")}
+                    onFocus={(e) => e.target.removeAttribute("readonly")}
                 />
                 <button 
                     onClick={handleLogin}
@@ -91,7 +91,7 @@ function Login () {
                     Dont have an account?  
                     <a href="/signup" className="text-blue-700"> Create New </a>
                     </div> 
-            </div>
+            </form>
         </div>
     )
 }

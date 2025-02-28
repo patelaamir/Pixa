@@ -76,26 +76,30 @@ function Signup() {
                 Hey, Enter your details to create your account
             </div>
 
-            <div className="space-y-4">
+            <form className="space-y-4" autoComplete="off">
                 <input 
                     className="border rounded-md py-2 px-4 w-full" 
                     id="fullName" 
-                    placeholder="Full Name"/>
-                     onFocus={(e) => e.target.setAttribute("autocomplete", "off")}
+                    placeholder="Full Name"
+                    onFocus={(e) => e.target.setAttribute("autocomplete", "off")}
+                    />
+                     
 
                 <input 
                     className="border rounded-md py-2 px-4 w-full" 
                     type="email" 
                     id="email" 
-                    placeholder="Email" />
-                     onFocus={(e) => e.target.setAttribute("autocomplete", "off")}
+                    placeholder="Email" 
+                    onFocus={(e) => e.target.removeAttribute("readonly")}
+                />
 
                 <input 
                     className="border rounded-md py-2 px-4 w-full" 
                     type="password" 
                     id="password" 
-                    placeholder="Password" /> 
-                     onFocus={(e) => e.target.setAttribute("autocomplete", "off")}
+                    placeholder="Password" 
+                    onFocus={(e) => e.target.removeAttribute("readonly")}
+                />
                 <button
                     onClick={handleSignup}
                     className="button">
@@ -105,9 +109,7 @@ function Signup() {
                     Already have an account? 
                 <a href="/login" className="text-blue-700"> Log In </a>
                 </div>
-
-
-            </div>
+            </form>
         </div>
     )
 }
