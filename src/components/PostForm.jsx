@@ -101,8 +101,9 @@ function PostForm({open, handleClose}) {
                                  <img src={file} className='h-[100%]' />
                             </div>
                             :
-                            <div className='border p-5 h-80 flex justify-center items-center '>
+                            <div className='border rounded-md p-5 h-80 flex justify-center items-center '>
                                 <IKUpload
+                                    className='text-sm'
                                     onError={(err) => console.log(err)}
                                     onSuccess={updateFile}
                                 />
