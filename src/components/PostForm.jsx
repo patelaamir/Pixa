@@ -21,7 +21,7 @@ function PostForm({open, handleClose}) {
         try {
             console.log(import.meta.env)
             const baseURL =
-                import.meta.env.PROD === "production"
+                import.meta.env.PROD
                 ? "https://pixa-omega.vercel.app"
                 : "http://localhost:3001";
           const response = await fetch(`${baseURL}/auth`);

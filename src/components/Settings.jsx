@@ -35,7 +35,7 @@ function Settings({ open, handleClose }) {
     const authenticateImageKit = async () => {
         try {
             const baseURL =
-                import.meta.env.PROD === "production"
+                import.meta.env.PROD
                 ? "https://pixa-omega.vercel.app"
                 : "http://localhost:3001";
           const response = await fetch(`${baseURL}/auth`);
