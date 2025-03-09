@@ -74,13 +74,13 @@ function Login () {
                     type="email" 
                     id="email" 
                     placeholder="Email"
-                    onFocus={(e) => e.target.removeAttribute("readonly")}
+                    onTouchStart={(e) => e.preventDefault()}
                 />
                 <input className="border rounded-md py-2 px-4 w-full"
                     type="password"
                     id="password"
                     placeholder="Password"
-                    onFocus={(e) => e.target.removeAttribute("readonly")}
+                    onTouchStart={(e) => e.preventDefault()}
                 />
                 <button 
                     onClick={handleLogin}
