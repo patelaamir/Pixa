@@ -1,5 +1,13 @@
 {
-    "rewrites": [
-      { "source": "/(.*)", "destination": "/index.html" }
-    ]
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "functions": {
+    "login": {
+      "runtime": "nodejs"
+    },
+    "signup": {
+      "runtime": "nodejs"
+    }
   }
+}
