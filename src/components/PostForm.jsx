@@ -9,16 +9,22 @@ import { IKContext, IKUpload } from "imagekitio-react"
 import { Filter } from 'bad-words'
 
 function PostForm({open, handleClose}) {
+    console.log(import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY)
     const inputFile = useRef(null)
     const [file, setFile] = useState()
     const [caption, setCaption] = useState()
-    const URLEndpoint = "https://ik.imagekit.io/pixa/"
-    const publicKey = "public_AZOsWS07COGHjErNayUX76zd4Oc="
+    const URLEndpoint = import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT
+    const publicKey = import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY
     const filter = new Filter();
 
     const authenticateImageKit = async () => {
         try {
-          const response = await fetch('http://localhost:3001/auth');
+            console.log(import.meta.env)
+            const baseURL =
+                import.meta.env.PROD === "production"
+                ? "https://pixa-omega.vercel.app"
+                : "http://localhost:3001";
+          const response = await fetch(`${baseURL}/auth`);
     
             if (!response.ok) {
                 const errorText = await response.text();

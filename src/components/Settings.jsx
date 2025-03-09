@@ -9,8 +9,8 @@ import { db } from '../firebase';
 import { X } from "lucide-react"
 
 function Settings({ open, handleClose }) {
-    const URLEndpoint = "https://ik.imagekit.io/pixa/"
-    const publicKey = "public_AZOsWS07COGHjErNayUX76zd4Oc="
+    const URLEndpoint = import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT
+    const publicKey = import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY
     const [profile, setProfile] = useState({})
     const currentUser = JSON.parse(localStorage.getItem("profile"))
 
@@ -34,7 +34,11 @@ function Settings({ open, handleClose }) {
 
     const authenticateImageKit = async () => {
         try {
-          const response = await fetch('http://localhost:3001/auth');
+            const baseURL =
+                import.meta.env.PROD === "production"
+                ? "https://pixa-omega.vercel.app"
+                : "http://localhost:3001";
+          const response = await fetch(`${baseURL}/auth`);
     
             if (!response.ok) {
                 const errorText = await response.text();
