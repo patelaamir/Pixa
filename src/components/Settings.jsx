@@ -113,7 +113,7 @@ function Settings({ open, handleClose }) {
                         <IKUpload
                             onError={(err) => {
                                 console.log(err)
-                                alert(err)
+                                alert(JSON.parse(err))
                             }}
                             onSuccess={updateImage}
                         />
