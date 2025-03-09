@@ -8,9 +8,9 @@ function MobileLayout({ children }) {
   const location = useLocation()
 
     return (
-      <div className='px-5 mb-20'>
+      <div className='mb-20'>
         <Header/>
-        <div>
+        <div className='px-5'>
           
           <div className="">
             {children}

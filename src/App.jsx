@@ -42,7 +42,7 @@ function App() {
     if (loading) {
       return (
         <div className="flex flex-col items-center justify-center space-y-2 mt-80 text-gray-500">
-        <img src="../public/loading.gif" className="size-5"/>
+        <img src="/loading.gif" className="size-5"/>
         <span>
         Loading
         </span>

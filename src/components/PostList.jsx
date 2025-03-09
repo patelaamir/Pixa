@@ -53,20 +53,20 @@ const PostList = () => {
             {
                 posts.length 
                 ?
-                <div className={ `flex flex-col space-y-20 ${screenSize.width < 640 ? 'px-5' : 'w-1/3'}`  }>
+                <div className={ `flex flex-col space-y-20 ${screenSize.width < 640 ? '' : 'w-1/3'}`  }>
                 {renderedPosts}
                 </div>
                 :
                 postsLoading
                 ?
                 <div className="flex flex-col items-center justify-center space-y-2 mt-80 text-gray-500">
-                <img src="../public/loading.gif" className="size-5"/>
+                <img src="/loading.gif" className="size-5"/>
                 <span>
                 Loading
                 </span>
             </div>
                 :
-                <div className="flex items-center justify-center mt-10 py-20 px-10 bg-gray-100 rounded-md">
+                <div className="text-center mt-10 py-20 px-10 bg-gray-100 rounded-md">
                     No posts found. Please  <a href="/search" className="mx-1 text-orange-600"> search </a> for friends and follow them.
                 </div>
             }

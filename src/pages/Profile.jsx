@@ -103,7 +103,7 @@ function Profile () {
     }
 
     return (
-        <div className="p-5">
+        <div className="py-5">
             {
                 profile.fullName
                 ?
@@ -189,7 +189,7 @@ function Profile () {
                             </div>
                         </div>
                         {
-                            !following && profile.private
+                            profile.username != currentUser.username && !following && profile.private
                             ?
                             <div className="text-gray-600">
                                 This account is Private
@@ -201,7 +201,7 @@ function Profile () {
                 </div>
                 :
                 <div className="flex flex-col items-center justify-center space-y-2 mt-60 text-gray-500">
-                    <img src="../public/loading.gif" className="size-5"/>
+                    <img src="/loading.gif" className="size-5"/>
                     <span>
                     Loading
                 </span>

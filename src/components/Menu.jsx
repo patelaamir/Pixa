@@ -48,7 +48,7 @@ const Menu =  () => {
     }
 
     return (
-        <div className="fixed bottom-0 z-10 flex justify-around bg-white w-full">
+        <div className="grid grid-cols-6 gap-2 w-full fixed bottom-0 z-10 bg-white">
             <div className="py-3" onClick={openTimeline}>
                 <LayoutDashboard/>
             </div>

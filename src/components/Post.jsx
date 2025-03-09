@@ -107,7 +107,7 @@ const Post = ({ post }) => {
                 isLoading
                 ?
                 <div className="flex flex-col items-center justify-center space-y-2 w-4/5 h-96 shadow bg-gray-50 rounded-md text-gray-500">
-                    <img src="../public/loading.gif" className="size-5"/>
+                    <img src="/loading.gif" className="size-5"/>
                     <span>
                     Loading
                     </span>
@@ -143,7 +143,7 @@ const Post = ({ post }) => {
                             ))}
                         </Menu>
                     </div>
-                    <img src={postInfo.imageUrl} className="mt-4 w-full h-auto"/>
+                    <img src={postInfo.imageUrl} className="mt-4 w-full h-auto rounded-md"/>
                     <div className="my-2">
                         <span className="font-semibold mr-1.5">
                             {postInfo.username}

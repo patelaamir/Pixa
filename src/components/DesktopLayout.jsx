@@ -6,9 +6,9 @@ function DesktopLayout({children}) {
   const location = useLocation()
 
     return (
-        <div className='px-5'>
+        <div className=''>
           <Header/>
-          <div className={!["/signup", "/login"].includes(location.pathname) ? 'grid grid-cols-[20%,80%]' : '' }>
+          <div className={ `px-5 ${!["/signup", "/login"].includes(location.pathname) ? 'grid grid-cols-[20%,80%]' : ''}` }>
             {
               !["/signup", "/login"].includes(location.pathname) 
               &&
