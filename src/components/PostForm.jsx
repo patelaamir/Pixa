@@ -106,7 +106,6 @@ function PostForm({open, handleClose}) {
                                     className='text-sm'
                                     onError={(err) => {
                                         console.log(err)
-                                        alert(JSON.parse(err))
                                     }}
                                     onSuccess={updateFile}
                                 />
