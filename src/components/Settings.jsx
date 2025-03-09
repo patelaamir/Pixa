@@ -111,7 +111,10 @@ function Settings({ open, handleClose }) {
                         </div>
                         :
                         <IKUpload
-                            onError={(err) => console.log(err)}
+                            onError={(err) => {
+                                console.log(err)
+                                alert(err)
+                            }}
                             onSuccess={updateImage}
                         />
                     }

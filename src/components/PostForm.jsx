@@ -104,7 +104,10 @@ function PostForm({open, handleClose}) {
                             <div className='border rounded-md p-5 h-80 flex justify-center items-center '>
                                 <IKUpload
                                     className='text-sm'
-                                    onError={(err) => console.log(err)}
+                                    onError={(err) => {
+                                        console.log(err)
+                                        alert(err)
+                                    }}
                                     onSuccess={updateFile}
                                 />
                             </div>
