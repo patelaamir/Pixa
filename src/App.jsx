@@ -26,8 +26,6 @@ function App() {
 
   const authenticateUser = () => {
     try {
-      console.log(loading, auth.currentUser);
-
       if (!loading && !auth.currentUser && location.pathname != "/signup") {
         navigate("/login")
       }
