@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
 import { db } from "../firebase";
 import { User, X } from "lucide-react";
-import useScreenSize from "./utils/screenSize"
+import useScreenSize from "../utils/screenSize"
 
 
 function Profile () {
