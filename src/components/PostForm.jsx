@@ -28,13 +28,13 @@ function PostForm({open, handleClose}) {
             
           const response = await fetch(`${baseURL}/auth`);
             console.log(response.ok)
-            console.log(response)
+            console.log(response.body)
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`Request failed with status ${response.status}: ${errorText}`);
             }
     
-            const data = await response.json();
+            const data = await response.clone().json();
             const { signature, expire, token } = data;
             return { signature, expire, token };
         } catch (error) {
