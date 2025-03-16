@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
 import { db } from "../firebase";
 import { User, X } from "lucide-react";
+import useScreenSize from "./utils/screenSize"
 
 
 function Profile () {
@@ -13,6 +14,7 @@ function Profile () {
     const [followerCount, setFollowerCount] = useState(0)
     const [followingCount, setFollowingCount] = useState(0)
     const currentUser = JSON.parse(localStorage.getItem("profile"));
+    const screenSize = useScreenSize()
    
     useEffect(() => {
         getProfileData()
@@ -113,7 +115,7 @@ function Profile () {
                             <div className="text-lg font-semibold">
                                 {profile.username}
                             </div>
-                            <div className="flex space-x-10">
+                            <div className={`flex ${screenSize.width < 640 ? 'space-x-5' : 'space-x-10'}`}>
                                 {
                                     profile.image
                                     ?
