@@ -17,6 +17,8 @@ app.use(function(req, res, next) {
 });
 
 app.get('/auth', function (req, res) {
+  console.log(imagekit)
+  console.log(imagekit.getAuthenticationParameters())
   var result = imagekit.getAuthenticationParameters();
   res.send(result);
 });

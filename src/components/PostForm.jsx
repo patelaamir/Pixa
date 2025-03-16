@@ -28,7 +28,7 @@ function PostForm({open, handleClose}) {
             
           const response = await fetch(`${baseURL}/auth`);
             console.log(response.ok)
-            console.log(response.json())
+            console.log(response)
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`Request failed with status ${response.status}: ${errorText}`);
