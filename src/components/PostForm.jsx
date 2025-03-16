@@ -26,7 +26,7 @@ function PostForm({open, handleClose}) {
                 : "http://localhost:3001";
 
             
-          const response = await fetch(`${baseURL}/auth`);
+          const response = await fetch(`${baseURL}/api/auth`);
             console.log(response.ok)
             console.log(response.body)
             if (!response.ok) {
