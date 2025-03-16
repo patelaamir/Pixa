@@ -24,8 +24,11 @@ function PostForm({open, handleClose}) {
                 import.meta.env.PROD
                 ? "https://pixa-omega.vercel.app"
                 : "http://localhost:3001";
+
+            
           const response = await fetch(`${baseURL}/auth`);
-    
+            console.log(response.ok)
+            console.log(response.json())
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`Request failed with status ${response.status}: ${errorText}`);
