@@ -178,12 +178,14 @@ function Profile () {
                             <div className="text-xl font-semibold mb-5">
                                 Posts
                             </div>
-                            <div className="grid grid-cols-3 gap-10">
+                            <div className="grid grid-cols-3 gap-2">
                                 {
                                     posts.map(post => {
                                         return (
                                         <a href={`/post/${post.id}`} className="">
-                                                <img src={post.imageUrl} className="max-h-96"/>
+                                                <img src={post.imageUrl} className="w-full h-full object-cover" style={{
+                                                    'aspectRatio': '1/1'
+                                                }}/>
                                             </a>
                                         )
                                     })
