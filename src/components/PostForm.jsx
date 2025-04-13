@@ -9,7 +9,6 @@ import { IKContext, IKUpload } from "imagekitio-react"
 import { Filter } from 'bad-words'
 
 function PostForm({open, handleClose}) {
-    console.log(import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY)
     const inputFile = useRef(null)
     const [file, setFile] = useState()
     const [caption, setCaption] = useState()
@@ -19,7 +18,6 @@ function PostForm({open, handleClose}) {
 
     const authenticateImageKit = async () => {
         try {
-            console.log(import.meta.env)
             const baseURL =
                 import.meta.env.PROD
                 ? "https://pixa-omega.vercel.app"
@@ -27,8 +25,6 @@ function PostForm({open, handleClose}) {
 
             
           const response = await fetch(`${baseURL}/api/auth`);
-            console.log(response.ok)
-            console.log(response.body)
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`Request failed with status ${response.status}: ${errorText}`);
@@ -42,12 +38,7 @@ function PostForm({open, handleClose}) {
         }
     }
 
-    const openFileSelector = () => {
-        inputFile.current.click()
-    }
-
     const updateFile = (response) => {
-       console.log(response)
        setFile(response.url)
     }
 
@@ -57,6 +48,10 @@ function PostForm({open, handleClose}) {
     const savePost = async (event) => {
         event.preventDefault()
         try {
+
+            if (!file) {
+                alert("Please add an image")
+            }
 
             if (filter.isProfane(caption)) {
                 alert("Vulgar content is not allowed!");
@@ -113,6 +108,7 @@ function PostForm({open, handleClose}) {
                             <div className='border rounded-md p-5 h-80 flex justify-center items-center '>
                                 <IKUpload
                                     className='text-sm'
+                                    accept='image/*'
                                     onError={(err) => {
                                         console.log(err)
                                     }}

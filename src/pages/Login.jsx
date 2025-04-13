@@ -1,5 +1,6 @@
 import { auth, db } from "../firebase"
 import { query, collection, where, getDocs } from "firebase/firestore"
+import { sendPasswordResetEmail } from "firebase/auth";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom"
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -34,7 +35,6 @@ function Login () {
 
     const handleLogin = (e) => {
         e.preventDefault()
-        console.log("handlelogin")
         let email = document.getElementById("email").value
         let password = document.getElementById("password").value
 
@@ -61,6 +61,24 @@ function Login () {
         navigate("/")
     }
 
+    const triggerForgotPasswordEmail = () => {
+        let email = document.getElementById("email").value
+        if (!email) {
+            alert("Please enter an email")
+            return
+        }
+        sendPasswordResetEmail(auth, email)
+        .then(() => {
+          alert("If an account with this email exists, we’ve sent a password reset link to your inbox.")
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // ..
+        });
+      
+    }
+
     return(
         <div className={`flex flex-col mx-auto text-center shadow-xl rounded-lg mt-20 p-5 ${screenSize.width < 640 ? 'w-full' : 'w-1/4'}`}>
             <div className="font-semibold text-xl mb-2">
@@ -82,6 +100,9 @@ function Login () {
                     placeholder="Password"
                     onTouchStart={(e) => e.preventDefault()}
                 />
+                <div className="text-sm text-gray-500 font-medium text-right cursor-pointer" onClick={triggerForgotPasswordEmail}>
+                    Forgot Password?
+                </div>
                 <button 
                     onClick={handleLogin}
                     className="button">
@@ -89,8 +110,10 @@ function Login () {
                 </button>
                 <div className="text-sm text-gray-600">
                     Dont have an account?  
-                    <a href="/signup" className="text-blue-700"> Create New </a>
-                    </div> 
+                    <a href="/signup" className="text-blue-700">
+                        Create New 
+                    </a>
+                </div>
             </form>
         </div>
     )
