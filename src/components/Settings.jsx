@@ -24,7 +24,6 @@ function Settings({ open, handleClose }) {
             const querySnapShot = await getDocs(q)
             querySnapShot.forEach(async doc => {
                 let data = await doc.data()
-                console.log(data, data.fullName)
                 setProfile(data)
             })
         } catch(err) {
@@ -55,7 +54,6 @@ function Settings({ open, handleClose }) {
     
     const saveProfile = async (event) => {
         event.preventDefault()
-        console.log(profile)
         await setDoc(doc(db, "userProfile", currentUser.email), profile).then(data => {
             handleClose()
         })

@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom"
 import { db } from "../firebase";
 import { User, X } from "lucide-react";
 import useScreenSize from "../utils/screenSize"
-
+import ProfileFollow from "../components/ProfileFollow";
 
 function Profile () {
     const { username } = useParams();
@@ -13,13 +13,18 @@ function Profile () {
     const [following, setFollowing] = useState(false)
     const [followerCount, setFollowerCount] = useState(0)
     const [followingCount, setFollowingCount] = useState(0)
+    const [openFollowList, setOpenFollowList] = useState(false)
+    const [followListTitle, setFollowListTitle] = useState(null)
+    const [followerList, setFollowerList] = useState([])
+    const [followingList, setFollowingList] = useState([])
+    const [currentFollowList, setCurrentFollowList] = useState([])
     const currentUser = JSON.parse(localStorage.getItem("profile"));
     const screenSize = useScreenSize()
    
     useEffect(() => {
         getProfileData()
-        getFollowerCount()
-        getFollowingCount()
+        getFollowers()
+        getFollowings()
     }, [username])
     
 
@@ -55,14 +60,20 @@ function Profile () {
         setPosts(postResult)
     }
 
-    const getFollowerCount = async () => {
-        const snapShot = await getCountFromServer(query(collection(db, "following"), where("following", "==", username)))
-        setFollowerCount(snapShot.data().count)
+    const getFollowers = async () => {
+        const q = query(collection(db, "following"), where("following", "==", username))
+        const snapShot = await getDocs(q)
+        const followResult = snapShot.docs.map(doc => doc.data())
+        setFollowerList(followResult)
+        setFollowerCount(snapShot.docs.length)
     }
 
-    const getFollowingCount = async () => {
-        const snapShot = await getCountFromServer(query(collection(db, "following"), where("follower", "==", username)))
-        setFollowingCount(snapShot.data().count)
+    const getFollowings = async () => {
+        const q = query(collection(db, "following"), where("follower", "==", username))
+        const snapShot = await getDocs(q)
+        const followResult = snapShot.docs.map(doc => doc.data())
+        setFollowingList(followResult)
+        setFollowingCount(snapShot.docs.length)
     }
 
     const checkIfFollowing = async () => {
@@ -86,7 +97,7 @@ function Profile () {
             }).then(data => {
                 setFollowing(data.id)
                 getPosts()
-                getFollowerCount()
+                getFollowers()
             })
         } catch (err) {
             console.log(err)
@@ -99,9 +110,21 @@ function Profile () {
             await deleteDoc(doc(db, "following", following)).then(data => {
                 setFollowing(false)
                 setPosts([])
-                getFollowerCount()
+                getFollowers()
             })
         }
+    }
+
+    const showFollowList = (title) => {
+        title == "Followers" ? setCurrentFollowList(followerList) : setCurrentFollowList(followingList)
+        setOpenFollowList(true)
+        setFollowListTitle(title)
+    }
+
+    const hideFollowList = () => {
+        setOpenFollowList(false)
+        setCurrentFollowList(null)
+        setFollowListTitle(null)
     }
 
     return (
@@ -132,7 +155,7 @@ function Profile () {
                                             { posts.length }
                                         </span>
                                     </div>
-                                    <div className="flex flex-col items-center">
+                                    <div className="flex flex-col items-center cursor-pointer" onClick={() => showFollowList("Followers")}>
                                         <span>
                                             Followers
                                         </span>
@@ -140,7 +163,7 @@ function Profile () {
                                             { followerCount }
                                         </span>
                                     </div>
-                                    <div className="flex flex-col items-center">
+                                    <div className="flex flex-col items-center cursor-pointer" onClick={() => showFollowList("Following")}>
                                         <span>
                                             Following
                                         </span>
@@ -211,6 +234,7 @@ function Profile () {
                 </span>
             </div>
             }
+            <ProfileFollow open={openFollowList} followList={currentFollowList} title={followListTitle} handleClose={hideFollowList} />
         </div>
     )
 }
