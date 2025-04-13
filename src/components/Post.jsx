@@ -1,6 +1,7 @@
 import { Heart, MessageCircle, EllipsisVertical } from "lucide-react"
 import { useEffect, useState } from "react"
 import CommentsSection from "./CommentsSection"
+import Likes from "./Likes"
 import { getDocs, query, collection, where, deleteDoc, doc, addDoc } from "firebase/firestore"
 import { db } from "../firebase"
 import Menu from '@mui/material/Menu';
@@ -13,6 +14,8 @@ const Post = ({ post }) => {
     const [isLoading, updateLoading] = useState(true)
     const [openCommentsSection, showCommentsSection] = useState(false)
     const [commentsFor, setCommentsFor] = useState(null)
+    const [openLikesSection, showLikesSection] = useState(false)
+    const [likesFor, showLikesFor] = useState(false)
     const currentUser = JSON.parse(localStorage.getItem("profile"))
 
     useEffect(() => {
@@ -41,6 +44,7 @@ const Post = ({ post }) => {
         setPostInfo(prev => ({
             liked: liked,
             likeCount: likesSnapShot.docs.length,
+            likes: likesSnapShot.docs.map((doc) => doc.data()),
             commentCount: commentsSnapshot.docs.length,
             ...prev
         }))
@@ -55,6 +59,18 @@ const Post = ({ post }) => {
     const hideComments = () => {
         showCommentsSection(false)
         setCommentsFor(null)
+    }
+
+    const showLikes = (post) => {
+        console.log(post);
+        
+        showLikesFor(post)
+        showLikesSection(true)
+    }
+
+    const hideLikes = () => {
+        showLikesSection(false)
+        showLikesFor(null)
     }
     
 
@@ -145,7 +161,9 @@ const Post = ({ post }) => {
                     </div>
                     <img src={postInfo.imageUrl} className="mt-4 w-full h-auto rounded-md"/>
                     <div className="my-2">
-                        <span className="font-semibold mr-1.5">
+                        <span className="font-semibold cursor-pointer mr-1.5" onClick={() => {
+                            window.location.href = `/profile/${postInfo.username}`
+                        }}>
                             {postInfo.username}
                         </span>
                         <span>
@@ -154,19 +172,20 @@ const Post = ({ post }) => {
                     </div>
                     <div className="flex items-center space-x-5">
                         <div className="flex items-center space-x-1">
-                            <span>
+                            <span className="cursor-pointer" onClick={() => showLikes(postInfo)}>
                             {postInfo.likeCount}
                             </span>
                             <Heart className={`w-5 h-5 cursor-pointer ${postInfo.liked ? 'fill-red-600 stroke-red-600' : ''}`} onClick={() => toggleLike(postInfo)}/>
                         </div>
-                        <div className="flex items-center space-x-1">
+                        <div className="flex items-center space-x-1 cursor-pointer" onClick={() => showComments(postInfo)}>
                             <span>
                             {postInfo.commentCount}
                             </span>
-                            <MessageCircle className="w-5 h-5 cursor-pointer" onClick={() => showComments(postInfo)}/>
+                            <MessageCircle className="w-5 h-5" />
                         </div>
                     </div>
                     <CommentsSection open={openCommentsSection} post={commentsFor} handleClose={hideComments} />
+                    <Likes open={openLikesSection} post={likesFor} handleClose={hideLikes} />
                 </div>
             }
         </div>
