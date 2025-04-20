@@ -24,7 +24,8 @@ function PostForm({open, handleClose}) {
                 : "http://localhost:3001";
 
             
-          const response = await fetch(`${baseURL}/api/auth`);
+          const actualURL = import.meta.env.PROD ? `${baseURL}/api/auth`: `${baseURL}/auth`
+          const response = await fetch(`${baseURL}/auth`);
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`Request failed with status ${response.status}: ${errorText}`);
