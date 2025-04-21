@@ -27,7 +27,6 @@ function Likes({open, post, handleClose}) {
             ...doc.data()
         }));
         setLikes(likesResult)
-        console.log(likes)
     }
 
     return (

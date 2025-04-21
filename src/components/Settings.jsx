@@ -37,8 +37,8 @@ function Settings({ open, handleClose }) {
                 import.meta.env.PROD
                 ? "https://pixa-omega.vercel.app"
                 : "http://localhost:3001";
-          const response = await fetch(`${baseURL}/api/auth`);
-    
+             const actualURL = import.meta.env.PROD ? `${baseURL}/api/auth`: `${baseURL}/auth`
+             const response = await fetch(actualURL);
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`Request failed with status ${response.status}: ${errorText}`);
