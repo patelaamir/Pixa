@@ -52,7 +52,8 @@ function ProfileFollow({ open, followList, title, handleClose }) {
                     {
                         listDetails.length > 0 ?
                         listDetails?.map(row => (
-                            <div className='flex space-x-2 cursor-pointer' onClick={() => {
+                            <div key={row.username || row.id} className='flex space-x-2 cursor-pointer' onClick={() => {
+                                handleClose()
                                 window.location.href = `/profile/${row.username}`
                             }}>
                                <img src={row.image} alt={row.fullName} className='size-10 rounded-full object-cover' />

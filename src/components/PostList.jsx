@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 import useScreenSize from "../utils/screenSize"
-import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, where } from "firebase/firestore"
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore"
 import { db } from "../firebase"
 import Post from "./Post"
 
@@ -44,7 +45,7 @@ const PostList = () => {
 
     const renderedPosts = posts?.map(post => {
         return (
-           <Post post={post} />
+           <Post key={post.id} post={post} />
         )
     })
 
@@ -60,14 +61,14 @@ const PostList = () => {
                 postsLoading
                 ?
                 <div className="flex flex-col items-center justify-center space-y-2 mt-80 text-gray-500">
-                <img src="/loading.gif" className="size-5"/>
+                <img src="/loading.gif" className="size-5" alt="loading"/>
                 <span>
                 Loading
                 </span>
             </div>
                 :
                 <div className="text-center mt-10 py-20 px-10 bg-gray-100 rounded-md">
-                    No posts found. Please  <a href="/search" className="mx-1 text-orange-600"> search </a> for friends and follow them.
+                    No posts found. Please  <Link to="/search" className="mx-1 text-orange-600"> search </Link> for friends and follow them.
                 </div>
             }
         </div>

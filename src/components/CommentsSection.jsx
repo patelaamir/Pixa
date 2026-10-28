@@ -17,7 +17,7 @@ function CommentsSection({open, post, handleClose}) {
 
     useEffect(() => {
         getComments()
-    }, post)
+    }, [post])
 
     const getComments = async () => {
         try {

@@ -42,11 +42,11 @@ const Post = ({ post }) => {
         })
 
         setPostInfo(prev => ({
+            ...prev,
             liked: liked,
             likeCount: likesSnapShot.docs.length,
             likes: likesSnapShot.docs.map((doc) => doc.data()),
             commentCount: commentsSnapshot.docs.length,
-            ...prev
         }))
         updateLoading(false)
     }

@@ -52,6 +52,7 @@ function PostForm({open, handleClose}) {
 
             if (!file) {
                 alert("Please add an image")
+                return
             }
 
             if (filter.isProfane(caption)) {
@@ -59,15 +60,14 @@ function PostForm({open, handleClose}) {
                 return;
             }
 
-            const docRef =  await addDoc(collection(db, "posts"), {
+            const data = await addDoc(collection(db, "posts"), {
                 caption: caption,
                 imageUrl: file,
                 username: JSON.parse(localStorage.getItem("profile")).username,
                 createdAt: serverTimestamp()
-            }).then(data => {
-                handleClose()
-                window.location.href = `/post/${data.id}`
             })
+            handleClose()
+            window.location.href = `/post/${data.id}`
         } catch(error) {
             console.log(error)
         }

@@ -54,9 +54,9 @@ function Settings({ open, handleClose }) {
     
     const saveProfile = async (event) => {
         event.preventDefault()
-        await setDoc(doc(db, "userProfile", currentUser.email), profile).then(data => {
-            handleClose()
-        })
+        await setDoc(doc(db, "userProfile", currentUser.email), profile)
+        localStorage.setItem("profile", JSON.stringify(profile))
+        handleClose()
     } 
 
     const updateProfile = (event) => {

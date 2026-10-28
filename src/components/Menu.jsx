@@ -11,7 +11,7 @@ const Menu =  () => {
     
     const [openProfileForm, toggleProfileForm] = useState(false);
     const [openSettingsModal, toggleSettings] = useState(false)
-    const currentUser = JSON.parse(localStorage.getItem("profile"))
+    const currentUser = JSON.parse(localStorage.getItem("profile")) || {}
 
     const openTimeline = () => {
         navigate("/")
@@ -26,7 +26,11 @@ const Menu =  () => {
     }
 
     const openProfile = () => {
-        navigate(`/profile/${currentUser.username}`)
+        if (currentUser.username) {
+            navigate(`/profile/${currentUser.username}`)
+        } else if (auth.currentUser?.email) {
+            navigate(`/profile/${auth.currentUser.email.split("@")[0]}`)
+        }
     }
 
     function openSettings() {

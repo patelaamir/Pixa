@@ -1,8 +1,8 @@
-import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc, doc, setDoc, getCountFromServer } from "firebase/firestore";
+import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc, doc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"
+import { useParams, Link } from "react-router-dom"
 import { db } from "../firebase";
-import { User, X } from "lucide-react";
+import { User } from "lucide-react";
 import useScreenSize from "../utils/screenSize"
 import ProfileFollow from "../components/ProfileFollow";
 
@@ -90,15 +90,14 @@ function Profile () {
     const followProfile = async (event) => {
         event.preventDefault()
         try {
-            const docRef = await addDoc(collection(db, "following"), {
+            const data = await addDoc(collection(db, "following"), {
                 "following": username,
                 "follower": currentUser.username,
                 "createdAt": serverTimestamp()
-            }).then(data => {
-                setFollowing(data.id)
-                getPosts()
-                getFollowers()
             })
+            setFollowing(data.id)
+            getPosts()
+            getFollowers()
         } catch (err) {
             console.log(err)
         }
@@ -107,11 +106,10 @@ function Profile () {
     const unfollowProfile = async (event) => {
         event.preventDefault()
         if (following) {
-            await deleteDoc(doc(db, "following", following)).then(data => {
-                setFollowing(false)
-                setPosts([])
-                getFollowers()
-            })
+            await deleteDoc(doc(db, "following", following))
+            setFollowing(false)
+            setPosts([])
+            getFollowers()
         }
     }
 
@@ -205,11 +203,11 @@ function Profile () {
                                 {
                                     posts.map(post => {
                                         return (
-                                        <a href={`/post/${post.id}`} className="">
-                                                <img src={post.imageUrl} className="w-full h-full object-cover" style={{
+                                            <Link key={post.id} to={`/post/${post.id}`} className="">
+                                                <img src={post.imageUrl} alt={post.caption || "post"} className="w-full h-full object-cover" style={{
                                                     'aspectRatio': '1/1'
                                                 }}/>
-                                            </a>
+                                            </Link>
                                         )
                                     })
                                 }

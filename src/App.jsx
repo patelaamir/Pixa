@@ -14,47 +14,35 @@ import PostList from './components/PostList'
 import Search from "./pages/Search"
 import PostDetail from './pages/PostDetail'
 
+const Layout = ({ children, loading, screenSize }) => {
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center space-y-2 mt-80 text-gray-500">
+        <img src="/loading.gif" className="size-5" alt="loading" />
+        <span>Loading</span>
+      </div>
+    )
+  } else if (screenSize.width < 640) {
+    return <MobileLayout>{children}</MobileLayout>
+  } else {
+    return <DesktopLayout>{children}</DesktopLayout>
+  }
+}
+
 function App() {
   const navigate = useNavigate()
   const location = useLocation()
-  const [user, loading] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth)
   const screenSize = useScreenSize()
 
   useEffect(() => {
-    authenticateUser()
-  }, [loading])
-
-  const authenticateUser = () => {
-    try {
-      if (!loading && !auth.currentUser && location.pathname != "/signup") {
-        navigate("/login")
-      }
-    } catch (e) {
-      console.error(e);
+    if (!loading && !user && !["/login", "/signup"].includes(location.pathname)) {
+      navigate("/login")
     }
-  }
-
-
-
-  const Layout = ({ children }) => {
-    if (loading) {
-      return (
-        <div className="flex flex-col items-center justify-center space-y-2 mt-80 text-gray-500">
-        <img src="/loading.gif" className="size-5"/>
-        <span>
-        Loading
-        </span>
-    </div>
-      )
-    } else if (screenSize.width < 640) {
-      return <MobileLayout>{children}</MobileLayout>
-    } else {
-      return <DesktopLayout>{children}</DesktopLayout>
-    }
-  };
+  }, [user, loading, location.pathname, navigate])
 
   return (
-    <Layout>
+    <Layout loading={loading} screenSize={screenSize}>
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
