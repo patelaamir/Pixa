@@ -56,7 +56,7 @@ const Menu =  () => {
             <div className="py-3" onClick={openTimeline}>
                 <LayoutDashboard/>
             </div>
-            <div className="py-3" onClick={() => window.location.href = "/search"}>
+            <div className="py-3" onClick={() => navigate("/search")}>
                 <Search/>
             </div>
             <div className="py-3" onClick={openPostForm}>

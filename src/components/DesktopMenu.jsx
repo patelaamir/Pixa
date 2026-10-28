@@ -60,7 +60,7 @@ function DesktopLayout() {
                 </span>
             </div>
 
-            <div className="flex items-center space-x-2 cursor-pointer py-5" onClick={() => window.location.href = "/search"}>
+            <div className="flex items-center space-x-2 cursor-pointer py-5" onClick={() => navigate("/search")}>
                 <Search className=""/>
                 <span>
                     Search

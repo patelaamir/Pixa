@@ -2,14 +2,13 @@ import { TextField } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { db } from "../firebase"
 import { addDoc, collection, serverTimestamp } from "firebase/firestore"; 
 import { IKContext, IKUpload } from "imagekitio-react"
 import { Filter } from 'bad-words'
 
 function PostForm({open, handleClose}) {
-    const inputFile = useRef(null)
     const [file, setFile] = useState()
     const [caption, setCaption] = useState()
     const URLEndpoint = import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT

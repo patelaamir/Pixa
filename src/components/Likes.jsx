@@ -13,7 +13,11 @@ function Likes({open, post, handleClose}) {
     }, [post])
 
     const getLikes = async () => {
-        let likeUsernames = post?.likes?.map(like => like.username)
+        let likeUsernames = post?.likes?.map(like => like.username).filter(Boolean) || []
+        if (likeUsernames.length === 0) {
+            setLikes([])
+            return
+        }
 
         const q = query(
             collection(db, "userProfile"),
@@ -43,21 +47,26 @@ function Likes({open, post, handleClose}) {
             <DialogContent className='flex flex-col relative'>
                 <div className='space-y-5'>
                     {
-                        likes?.map(like => (
-                            <div className='flex space-x-2 cursor-pointer' onClick={() => {
-                                window.location.href = `/profile/${like.username}`
-                            }}>
-                                <img className='size-10 object-cover rounded-full' src={like.image} />
-                                <div className='flex flex-col'>
-                                    <span>
-                                        {like.fullName}
-                                    </span>
-                                    <span className='text-sm text-gray-700'>
-                                        {like.username}
-                                    </span>
+                        likes?.length > 0 ? (
+                            likes.map(like => (
+                                <div key={like.username || like.id} className='flex space-x-2 cursor-pointer' onClick={() => {
+                                    handleClose()
+                                    window.location.href = `/profile/${like.username}`
+                                }}>
+                                    <img className='size-10 object-cover rounded-full' src={like.image || "/pixa.svg"} alt={like.username} />
+                                    <div className='flex flex-col'>
+                                        <span>
+                                            {like.fullName}
+                                        </span>
+                                        <span className='text-sm text-gray-700'>
+                                            @{like.username}
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            ))
+                        ) : (
+                            <div className='text-sm text-gray-500'>No likes yet.</div>
+                        )
                     }
                 </div>
             </DialogContent>

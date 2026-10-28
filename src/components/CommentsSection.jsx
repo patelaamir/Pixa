@@ -45,7 +45,7 @@ function CommentsSection({open, post, handleClose}) {
             "username": currentUser.username,
             "comment": newComment,
             "createdAt": serverTimestamp()
-        }).then(data => {
+        }).then(() => {
             setComments(prevComments => {
                 return [{
                     "post": post,

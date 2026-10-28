@@ -1,8 +1,6 @@
-import { useState } from 'react'
 import Header from './Header'
 import Menu from './Menu'
 import { useLocation } from "react-router-dom"
-import PostList from './PostList'
 
 function MobileLayout({ children }) {  
   const location = useLocation()

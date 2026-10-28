@@ -1,11 +1,11 @@
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useScreenSize from "../utils/screenSize";
-
 
 const Header = () => {
     const screenSize = useScreenSize()
+    const navigate = useNavigate()
     const redirectToHome = () => {
-        window.location.href = "/"
+        navigate("/")
     }
     
     return (
